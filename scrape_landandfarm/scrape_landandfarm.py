@@ -8,6 +8,7 @@ from psycopg2.extensions import AsIs
 from db_config import config, create_tables
 from progress_bar import printProgressBar
 import sys
+from datetime import datetime
 
 NL='\n'
 
@@ -46,7 +47,7 @@ def getPropertyInfo(property_card_el, state, zip_code):
       'zip_code': zip_code
    }
 
-def insertDB(insert_cmd):
+def insertDB(insert_cmd, columns, values):
    try:
       db_cursor.execute(insert_cmd, (AsIs(','.join(columns)), tuple(values)))
       db_connection.commit()
@@ -56,24 +57,28 @@ def insertDB(insert_cmd):
 
 def insertListingDB(property_info):
    """ Insert property info listings into database """
-   columns = ['id', 'price', 'acres', 'geog', 'insert_date', 'zip']
+   columns = ['listing_id', 'price', 'acres', 'geog', 'insert_date', 'zip_code']
+   # get geometry value from lat and long
+   geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
+   db_cursor.execute(geometry_cmd)
+   geometry = db_cursor.fetchone()
    values = [
       property_info['id'],
       property_info['price'],
       property_info['acres'],
-      f'ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)',
-      property_info[''],
+      geometry,
+      datetime.utcnow(),
       property_info['zip_code'],
    ]
-   insert_cmd = 'insert into listings (%s) values %s'
-   insertDB(insert_cmd)
+   insert_cmd = 'INSERT INTO listings (%s) VALUES %s ON CONFLICT DO NOTHING'
+   insertDB(insert_cmd, columns, values)
 
 def insertZipCodeDB(csv_row):
    """ Insert zip code info into database """
    columns = ['zip_code', 'primary_city', 'state', 'county']
    values = [csv_row['zip'], csv_row['primary_city'], csv_row['state'], csv_row['county']]
-   insert_cmd = 'insert into zip_codes (%s) values %s'
-   insertDB(insert_cmd)
+   insert_cmd = 'INSERT INTO zip_codes (%s) VALUES %s ON CONFLICT DO NOTHING'
+   insertDB(insert_cmd, columns, values)
 
 def connectDB():
    """ Connect to the PostgreSQL database server and insert zip code info """
@@ -82,14 +87,15 @@ def connectDB():
       params = config()
 
       # connect to the PostgreSQL server
+      global db_connection
       db_connection = psycopg2.connect(**params)
 
       # create a cursor
+      global db_cursor
       db_cursor = db_connection.cursor()
 
    except (Exception, psycopg2.DatabaseError) as error:
       clean_up()
-      # exit and display error
       sys.exit(error)
 
 def useZip(row):
@@ -102,16 +108,16 @@ def main():
    min_price = 5000
    max_price = 20000
    headers = {'User-Agent': 'Mozilla/5.0 (X11: Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0'}
-   num_zip_codes = 0;
+   num_zip_codes = 0
 
    create_tables()
+   connectDB()
 
    with open('../zip_code_database.csv', newline='') as csvfile:
       reader = csv.DictReader(csvfile, delimiter=',')
 
       # get number of valid zip codes to search
       num_zip_codes = sum([1 if useZip(row) else 0 for row in reader])
-      print(f'num_zip_codes: {num_zip_codes}')
 
       # init progressBar
       printProgressBar(0, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
@@ -122,6 +128,7 @@ def main():
       index = 0
       for row in reader:
          if useZip(row):
+            insertZipCodeDB(row)
             # request_url = f'{BASE_URL}{row["state"]}/{row["zip"]}-land-for-sale/?MinPrice={min_price}&MaxPrice={max_price}'
             request_url = f'https://www.landandfarm.com/search/CO/80465-land-for-sale'
             req = requests.get(request_url, headers=headers)
@@ -131,15 +138,13 @@ def main():
                if not soup.findAll(text='No Results Found For Your Current Search'):
                   results_el = soup.find('div', {'id': 'searchResultsGrid'})
                   property_card_el_list = results_el.find_all('article', {'class': 'property-card'})
-                  propertyInfoList = [getPropertyInfo(prop_el, row['state'], row['zip']) for prop_el in property_card_el_list]
-
-                  writeToDB(propertyInfoList)
+                  property_info_list = [getPropertyInfo(prop_el, row['state'], row['zip']) for prop_el in property_card_el_list]
+                  for prop_info in property_info_list:
+                     insertListingDB(prop_info)
 
                   printProgressBar(index, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
                   index += 1
 
-                  # temporary for debugging purposes
-                  break
       # progress complete
       printProgressBar(num_zip_codes, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
 

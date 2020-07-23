@@ -37,7 +37,7 @@ def create_tables():
             price INTEGER NOT NULL,
             acres NUMERIC(4,2) NOT NULL,
             geog GEOGRAPHY NOT NULL UNIQUE,
-            insert_date TIMESTAMP NOT NULL,
+            insert_date TIMESTAMPTZ NOT NULL,
             zip_code CHAR(5) NOT NULL,
             FOREIGN KEY (zip_code)
                 REFERENCES zip_codes (zip_code)

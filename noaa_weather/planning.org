@@ -1,0 +1,6 @@
+* automate data request to email from NOAA 
+
+** test noaa dataset api 
+
+* set up python development environment
+

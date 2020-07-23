@@ -1,0 +1,51 @@
+
+Brainstorm Land Price Trends Project
+
+Scrape data from Landwatch.com using archive.org and the current Landwatch site 
+
+Create cron job for scrapping data from landwatch.com
+
+store scrapped data in stores
+
+create web based visualization timelapse of land prices
+
+use data analysis tools on scrapped data (store as well) to create statistical models
+
+create public api for data
+
+create public facing site for viewing and interacting with data and models 
+
+General Tools and Practices
+	Agile
+	Screen sharing / Screen capture 
+	CI/CD pipeline
+		precommit hooks for linting and unit tests
+	Well defined git workflow
+
+Considerations/Stuff to look into:
+	Microservice/ modular architecture
+	visual studio live share
+	safe parallelism 
+	scalablity
+	robustness
+	documentation
+	comments explain why instead of what
+	simple, clean, readable code (KISS)
+	DRY
+
+Dev Environment:
+	Docker
+	VS Code
+	Jupyter Notebook plugin(?)
+
+
+
+Scrapping:
+	Beautiful Soup
+
+API:
+	Spring Boot
+
+Website/public facing info:
+	github readme
+	MEAN stack

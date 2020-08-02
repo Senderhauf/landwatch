@@ -9,15 +9,34 @@ from db_config import config, create_tables
 from progress_bar import printProgressBar
 import sys
 from datetime import datetime
+from rotate_request_proxies import cycle_proxies, get_proxies
+import logging
+import random
 
 NL='\n'
 
 STATES_LIST = [
-   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA',
-   'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
-   'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
-   'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+   # 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA',
+   # 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
+   # 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
+   # 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+   'CA', 'CO', 'KY', 'MN', 'NV', 'NM', 'NY', 'NC', 'OR', 'PA', 'TN', 'UT', 'VT', 'VA', 'WA', 'WY'
 ]
+
+USER_AGENT_LIST = [
+   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (X11; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
+   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+   'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
+]
+
 # postgres database connection
 db_connection = None
 # postgres database cursor
@@ -30,6 +49,24 @@ def clean_up():
    if db_cursor is not None:
       db_cursor.close()
 
+
+def getZipGeography(zip_code):
+   db_cursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{zip_code}\'')
+   lat_long = db_cursor.fetchone()
+   latitude = lat_long[0]
+   longitude = lat_long[1]
+   # print(f'latitude: {latitude}')
+   # print(f'longitude: {longitude}')
+   geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)'
+   db_cursor.execute(geometry_cmd)
+   return db_cursor.fetchone();
+   
+def getAttribute(element, attribute):
+   try:
+      return element[attribute]
+   except KeyError:
+      return None
+
 def getPropertyInfo(property_card_el, state, zip_code):
    price_el = property_card_el.find('div', {'class': 'property-card--price'})
    price_el_text = price_el.get_text()
@@ -38,12 +75,15 @@ def getPropertyInfo(property_card_el, state, zip_code):
    acres_text = stats_el.span.get_text()
    acres_str = acres_text[:acres_text.index('acres')].strip()
    acres = float(acres_str)
+   listing_id_el = property_card_el.find('div', {'class': 'property-card--saved-indicator'})
+   listing_id = listing_id_el['data-savable-property-id']
+   # print(f'listing_id: {listing_id}   zip_code: {zip_code}   price: {price}   acres: {acres}')
    return {
-      'id': property_card_el['data-mappable-property-id'],
+      'listing_id': listing_id,
       'price': price,
       'acres': acres,
-      'latitude': property_card_el['data-mappable-latitude'],
-      'longitude': property_card_el['data-mappable-longitude'],
+      'latitude': getAttribute(property_card_el, 'data-mappable-latitude'),
+      'longitude': getAttribute(property_card_el, 'data-mappable-longitude'),
       'zip_code': zip_code
    }
 
@@ -59,11 +99,15 @@ def insertListingDB(property_info):
    """ Insert property info listings into database """
    columns = ['listing_id', 'price', 'acres', 'geog', 'insert_date', 'zip_code']
    # get geometry value from lat and long
-   geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
-   db_cursor.execute(geometry_cmd)
-   geometry = db_cursor.fetchone()
+   geometry = None;
+   if property_info['longitude'] is None or property_info['latitude'] is None:
+      geometry = getZipGeography(property_info['zip_code'])
+   else:
+      geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
+      db_cursor.execute(geometry_cmd)
+      geometry = db_cursor.fetchone()
    values = [
-      property_info['id'],
+      property_info['listing_id'],
       property_info['price'],
       property_info['acres'],
       geometry,
@@ -75,8 +119,8 @@ def insertListingDB(property_info):
 
 def insertZipCodeDB(csv_row):
    """ Insert zip code info into database """
-   columns = ['zip_code', 'primary_city', 'state', 'county']
-   values = [csv_row['zip'], csv_row['primary_city'], csv_row['state'], csv_row['county']]
+   columns = ['zip_code', 'primary_city', 'state', 'county', 'latitude', 'longitude']
+   values = [csv_row['zip'], csv_row['primary_city'], csv_row['state'], csv_row['county'], csv_row['latitude'], csv_row['longitude']]
    insert_cmd = 'INSERT INTO zip_codes (%s) VALUES %s ON CONFLICT DO NOTHING'
    insertDB(insert_cmd, columns, values)
 
@@ -104,10 +148,9 @@ def useZip(row):
 def main():
    BASE_URL = 'https://www.landandfarm.com/search/'
    min_acre = 5
-   max_acre = 40
+   max_acre = 100
    min_price = 5000
-   max_price = 20000
-   headers = {'User-Agent': 'Mozilla/5.0 (X11: Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0'}
+   max_price = 40000
    num_zip_codes = 0
 
    create_tables()
@@ -125,13 +168,26 @@ def main():
       # reset csv iterator
       csvfile.seek(0);
 
+      # TODO: REMOVE!!!!
+      # temporarily jump to item 6880 as that's where error occured last night
+      # csvfile.seek(6880);
+      # num_zip_codes -= 6880
+
+      # init proxies list
+      proxies = get_proxies({'User-Agent': random.choice(USER_AGENT_LIST)})
+
       index = 0
       for row in reader:
          if useZip(row):
             insertZipCodeDB(row)
-            # request_url = f'{BASE_URL}{row["state"]}/{row["zip"]}-land-for-sale/?MinPrice={min_price}&MaxPrice={max_price}'
-            request_url = f'https://www.landandfarm.com/search/CO/80465-land-for-sale'
-            req = requests.get(request_url, headers=headers)
+            request_url = f'{BASE_URL}{row["state"]}/{row["zip"]}-land-for-sale/?MinAcreage={min_acre}&MaxAcreage={max_acre}&MinPrice={min_price}&MaxPrice={max_price}'
+            # get random user-agent
+            headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
+            # get proxies intermittently
+            if index % 100:
+               proxies = get_proxies(headers)
+            # use cycle_proxies to get request object from proxied server
+            req = cycle_proxies(proxies, request_url, headers)
 
             if req.status_code == 200:
                soup = BeautifulSoup(req.text, 'html.parser')
@@ -144,6 +200,8 @@ def main():
 
                   printProgressBar(index, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
                   index += 1
+            else:
+               logging.error(f'Request not 200: {request_url}')
 
       # progress complete
       printProgressBar(num_zip_codes, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
@@ -151,5 +209,7 @@ def main():
       clean_up()
 
 if __name__ =='__main__':
-    main()
+   logging.basicConfig(filename='scrape_landandfarm.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+   logging.info('TEST LOGGING')
+   main()
 

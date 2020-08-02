@@ -28,7 +28,9 @@ def create_tables():
             zip_code CHAR(5) PRIMARY KEY,
             primary_city VARCHAR(50),
             state CHAR(2) NOT NULL,
-            county VARCHAR(20) NOT NULL
+            county VARCHAR(50) NOT NULL,
+            latitude REAL NOT NULL,
+            longitude REAL NOT NULL
         )
         """,
         """

@@ -1,0 +1,50 @@
+ 6898  Sat Aug 22 – 07:47:37 PM less noaa_api_products.txt 
+ 6899  Sat Aug 22 – 07:56:55 PM firefox https://api.weather.gov/products/3b27bb8c-a621-4c2e-a48f-678b82654f33
+ 6900  Sat Aug 22 – 05:55:02 PM code log/scrape_landandfarm_2020-08-22_1
+ 6901  Sat Aug 22 – 05:55:16 PM code log/scrape_landandfarm_2020-08-22_17\:52\:01.132975.log 
+ 6902  Sat Aug 22 – 08:30:46 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations
+ 6903  Sat Aug 22 – 08:32:23 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/locationcategories
+ 6904  Sat Aug 22 – 08:32:31 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/locationcategories | json_pp
+ 6905  Sat Aug 22 – 08:33:03 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/locationcategories/ZIP | json_pp
+ 6906  Sat Aug 22 – 08:34:01 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212
+ 6907  Sat Aug 22 – 08:34:08 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212 | json_pp
+ 6908  Sat Aug 22 – 08:34:31 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets | json_pp
+ 6909  Sat Aug 22 – 08:37:14 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2010-01-01&enddate=2020-01-01 | json_pp
+ 6910  Sat Aug 22 – 08:38:26 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2010-01-01&enddate=2020-01-01
+ 6911  Sat Aug 22 – 08:39:05 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2010-01-01&enddate=2020-01-01"
+ 6912  Sat Aug 22 – 08:39:17 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2010-01-01&enddate=2020-01-01"
+ 6913  Sat Aug 22 – 08:39:23 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2010-01-01&enddate=2020-01-01" | json_pp
+ 6914  Sat Aug 22 – 08:39:47 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6915  Sat Aug 22 – 08:40:32 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6916  Sat Aug 22 – 08:48:58 PM sudo -s
+ 6917  Sat Aug 22 – 08:49:18 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6918  Sat Aug 22 – 08:49:25 PM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6919  Sun Aug 23 – 10:12:38 AM sudo -s
+ 6920  Sun Aug 23 – 10:14:14 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53212&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6921  Sun Aug 23 – 10:14:52 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:54220&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6922  Sun Aug 23 – 10:15:57 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53211&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6923  Sun Aug 23 – 10:17:06 AM firefox "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53211&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01"
+ 6924  Sun Aug 23 – 10:23:43 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets | json_pp
+ 6925  Sun Aug 23 – 10:24:34 AM firefox "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53211&datasetid=PRECIP_HLY&startdate=2015-01-01&enddate=2020-01-01"
+ 6926  Sun Aug 23 – 10:24:54 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53211&datasetid=PRECIP_HLY&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6927  Sun Aug 23 – 10:25:17 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid=ZIP:53211&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6928  Sun Aug 23 – 10:25:41 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?locationid=ZIP:53211&datasetid=GHCND&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6929  Sun Aug 23 – 10:26:26 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2015-01-01&enddate=2020-01-01" | json_pp
+ 6930  Sun Aug 23 – 10:26:40 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2015-01-01&enddate=2020-01-01"
+ 6931  Sun Aug 23 – 10:26:55 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2019-01-01&enddate=2020-01-01"
+ 6932  Sun Aug 23 – 10:27:06 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2019-01-01&enddate=2020-01-01" | json_pp
+ 6933  Sun Aug 23 – 10:27:47 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2019-01-01&enddate=2020-01-01&limit=1000" | json_pp
+ 6934* Sun Aug 23 – 10:29:06 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=GHCND:US1WIMW0001&startdate=2019-01-01&enddate=2020-01-01&limit=1000&datatypeid=" | json_pp
+ 6935  Sun Aug 23 – 10:31:12 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets | json_pp
+ 6936  Sun Aug 23 – 10:31:52 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets | noaa_datasets.txt
+ 6937  Sun Aug 23 – 10:31:54 AM ls
+ 6938  Sun Aug 23 – 10:32:00 AM curl -H "token: QYumHTESHvMktBsArZIjYseYqPxbHiom" https://www.ncdc.noaa.gov/cdo-web/api/v2/datasets > noaa_datasets.txt
+ 6939  Sun Aug 23 – 10:32:02 AM ls
+ 6940  Sun Aug 23 – 10:32:09 AM less noaa_api_products.txt 
+ 6941  Sun Aug 23 – 10:32:23 AM rm noaa_api_products.txt 
+ 6942  Sun Aug 23 – 10:32:27 AM history
+ 6943  Sun Aug 23 – 10:32:42 AM history | tail -n 100
+ 6944  Sun Aug 23 – 10:33:15 AM history | tail -n 100 > noaa_api_calls.txt
+ 6945  Sun Aug 23 – 10:33:16 AM ls
+ 6946  Sun Aug 23 – 10:33:19 AM less noaa_api_calls.txt 
+ 6947  Sun Aug 23 – 10:33:36 AM history | tail -n 50 > noaa_api_calls.txt

@@ -1,26 +1,71 @@
 #!/usr/bin/env python3
 import requests
 from bs4 import BeautifulSoup
-import csv
-from configparser import ConfigParser
+import re
 import psycopg2
 from psycopg2.extensions import AsIs
-from db_config import config, create_tables
-from progress_bar import printProgressBar
-import sys
+from .progress_bar import printProgressBar
 from datetime import datetime
-from rotate_request_proxies import cycle_proxies, get_proxies
 import logging
 import random
+import sys
+from db_config.db_config import config, createTables
+import time
+import concurrent.futures
 
 NL='\n'
 
 STATES_LIST = [
-   # 'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA',
-   # 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
-   # 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
-   # 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-   'CA', 'CO', 'KY', 'MN', 'NV', 'NM', 'NY', 'NC', 'OR', 'PA', 'TN', 'UT', 'VT', 'VA', 'WA', 'WY'
+   # {'name': 'Alabama', 'abrev': 'AL'},
+   # {'name': 'Alaska', 'abrev': 'AK'},
+   {'name': 'Arizona', 'abrev': 'AZ'},
+   # {'name': 'Arkansas', 'abrev': 'AR'},
+   {'name': 'California', 'abrev': 'CA'},
+   {'name': 'Colorado', 'abrev': 'CO'},
+   # {'name': 'Connecticut', 'abrev': 'CT'},
+   # {'name': 'Delaware', 'abrev': 'DE'},
+   # {'name': 'Florida', 'abrev': 'FL'},
+   # {'name': 'Georgia', 'abrev': 'GA'},
+   {'name': 'Hawaii', 'abrev': 'HI'},
+   # {'name': 'Idaho', 'abrev': 'ID'},
+   # {'name': 'Illinois', 'abrev': 'IL'},
+   # {'name': 'Indiana', 'abrev': 'IN'},
+   # {'name': 'Iowa', 'abrev': 'IA'},
+   # {'name': 'Kansas', 'abrev': 'KS'},
+   {'name': 'Kentucky', 'abrev': 'KY'},
+   # {'name': 'Louisiana', 'abrev': 'LA'},
+   # {'name': 'Maine', 'abrev': 'ME'},
+   # {'name': 'Maryland', 'abrev': 'MD'},
+   # {'name': 'Massachusetts', 'abrev': 'MA'},
+   # {'name': 'Michigan', 'abrev': 'MI'},
+   {'name': 'Minnesota', 'abrev': 'MN'},
+   # {'name': 'Mississippi', 'abrev': 'MS'},
+   # {'name': 'Missouri', 'abrev': 'MO'},
+   # {'name': 'Montana', 'abrev': 'MT'},
+   # {'name': 'Nebraska', 'abrev': 'NE'},
+   {'name': 'Nevada', 'abrev': 'NV'},
+   # {'name': 'New Hampshire', 'abrev': 'NH'},
+   # {'name': 'New Jersey', 'abrev': 'NJ'},
+   {'name': 'New Mexico', 'abrev': 'NM'},
+   {'name': 'New York', 'abrev': 'NY'},
+   {'name': 'North Carolina', 'abrev': 'NC'},
+   # {'name': 'North Dakota', 'abrev': 'ND'},
+   # {'name': 'Ohio', 'abrev': 'OH'},
+   # {'name': 'Oklahoma', 'abrev': 'OK'},
+   {'name': 'Oregon', 'abrev': 'OR'},
+   # {'name': 'Pennsylvania', 'abrev': 'PA'},
+   # {'name': 'Rhode Island', 'abrev': 'RI'},
+   # {'name': 'South Carolina', 'abrev': 'SC'},
+   # {'name': 'South Dakota', 'abrev': 'SD'},
+   {'name': 'Tennessee', 'abrev': 'TN'},
+   {'name': 'Texas', 'abrev': 'TX'},
+   {'name': 'Utah', 'abrev': 'UT'},
+   {'name': 'Vermont', 'abrev': 'VT'},
+   {'name': 'Virginia', 'abrev': 'VA'},
+   {'name': 'Washington', 'abrev': 'WA'},
+   # {'name': 'West Virginia', 'abrev': 'WV'},
+   {'name': 'Wisconsin', 'abrev': 'WI'},
+   {'name': 'Wyoming', 'abrev': 'WY'}
 ]
 
 USER_AGENT_LIST = [
@@ -37,29 +82,33 @@ USER_AGENT_LIST = [
    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 ]
 
-# postgres database connection
-db_connection = None
-# postgres database cursor
-db_cursor = None
+MAX_THREADS = 15
 
-def clean_up():
-   """ close the communication with the PostgreSQL """
-   if db_connection is not None:
-      db_connection.close()
-   if db_cursor is not None:
-      db_cursor.close()
+def getDbCursor():
+   """ Connect to the PostgreSQL database server and insert zip code info """
+   try:
+      # read connection parameters
+      params = config()
 
+      # connect to the PostgreSQL server
+      global dbConnection
+      dbConnection = psycopg2.connect(**params)
+      return dbConnection.cursor()
 
-def getZipGeography(zip_code):
-   db_cursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{zip_code}\'')
-   lat_long = db_cursor.fetchone()
+   except (Exception, psycopg2.DatabaseError) as error:
+      logging.error(error);
+      sys.exit(error)
+
+def getZipGeography(dbCursor, zip_code):
+   if (not zip_code):
+      return
+   dbCursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{zip_code}\'')
+   lat_long = dbCursor.fetchone()
    latitude = lat_long[0]
    longitude = lat_long[1]
-   # print(f'latitude: {latitude}')
-   # print(f'longitude: {longitude}')
    geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)'
-   db_cursor.execute(geometry_cmd)
-   return db_cursor.fetchone();
+   dbCursor.execute(geometry_cmd)
+   return dbCursor.fetchone();
    
 def getAttribute(element, attribute):
    try:
@@ -67,149 +116,140 @@ def getAttribute(element, attribute):
    except KeyError:
       return None
 
-def getPropertyInfo(property_card_el, state, zip_code):
-   price_el = property_card_el.find('div', {'class': 'property-card--price'})
-   price_el_text = price_el.get_text()
-   price = int(price_el_text[price_el_text.index('$')+1::].replace(',', ''))
-   stats_el = property_card_el.find('div', {'class': 'property-card--quick-stats'})
-   acres_text = stats_el.span.get_text()
-   acres_str = acres_text[:acres_text.index('acres')].strip()
-   acres = float(acres_str)
-   listing_id_el = property_card_el.find('div', {'class': 'property-card--saved-indicator'})
-   listing_id = listing_id_el['data-savable-property-id']
-   # print(f'listing_id: {listing_id}   zip_code: {zip_code}   price: {price}   acres: {acres}')
+def getPropertyZipCode(propertyCardElement, stateAbrev):
+   addressElement = propertyCardElement.find('address', {'class': 'location'})
+   addressText = addressElement.text
+   nums = re.findall(r'\d+', addressText[addressText.index(stateAbrev):])
+   return next((num for num in nums if len(num)==5), '')
+
+def getPropertyInfo(propertyCardElement, state):
+   zipCode = getPropertyZipCode(propertyCardElement, state['abrev'])
+   urlElement = propertyCardElement.find('a', {'class': 'property-card--property-link'})
+   url = f'www.landandfarm.com{urlElement["href"]}'
+   priceElement = propertyCardElement.find('div', {'class': 'property-card--price'})
+   priceElementText = priceElement.get_text()
+   price = int(priceElementText[priceElementText.index('$')+1::].replace(',', ''))
+   statsElement = propertyCardElement.find('div', {'class': 'property-card--quick-stats'})
+   acresText = statsElement.span.get_text()
+   acresString = acresText[:acresText.index('acres')].strip()
+   acres = float(acresString)
+   listingIdElement = propertyCardElement.find('div', {'class': 'property-card--saved-indicator'})
+   listingId = listingIdElement['data-savable-property-id']
    return {
-      'listing_id': listing_id,
+      'listing_id': listingId,
       'price': price,
       'acres': acres,
-      'latitude': getAttribute(property_card_el, 'data-mappable-latitude'),
-      'longitude': getAttribute(property_card_el, 'data-mappable-longitude'),
-      'zip_code': zip_code
+      'latitude': getAttribute(propertyCardElement, 'data-mappable-latitude'),
+      'longitude': getAttribute(propertyCardElement, 'data-mappable-longitude'),
+      'zip_code': zipCode,
+      'url': url
    }
 
-def insertDB(insert_cmd, columns, values):
+def insertDb(dbCursor, insertCmd, columns, values):
    try:
-      db_cursor.execute(insert_cmd, (AsIs(','.join(columns)), tuple(values)))
-      db_connection.commit()
+      dbCursor.execute(insertCmd, (AsIs(','.join(columns)), tuple(values)))
+      dbConnection.commit()
    except (Exception, psycopg2.DatabaseError) as error:
-      clean_up()
+      logging.error(error)
       sys.exit(error)
 
 def insertListingDB(property_info):
    """ Insert property info listings into database """
-   columns = ['listing_id', 'price', 'acres', 'geog', 'insert_date', 'zip_code']
-   # get geometry value from lat and long
-   geometry = None;
-   if property_info['longitude'] is None or property_info['latitude'] is None:
-      geometry = getZipGeography(property_info['zip_code'])
+   dbCursor = getDbCursor()
+
+   # check zip_code is valid
+   dbCursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{property_info["zip_code"]}\'')
+   zipCodeFromDb = dbCursor.fetchone()
+   if (zipCodeFromDb):
+      columns = ['listing_id', 'price', 'acres', 'geog', 'insert_date', 'zip_code', 'price_per_acre', 'url']
+      # get geometry value from lat and long
+      geometry = None;
+      if property_info['longitude'] is None or property_info['latitude'] is None:
+         geometry = getZipGeography(dbCursor, property_info['zip_code'])
+      else:
+         geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
+         dbCursor.execute(geometry_cmd)
+         geometry = dbCursor.fetchone()
+      values = [
+         property_info['listing_id'],
+         property_info['price'],
+         property_info['acres'],
+         geometry,
+         datetime.utcnow(),
+         property_info['zip_code'],
+         property_info['price']/property_info['acres'],
+         property_info['url']
+      ]
+      insert_cmd = 'INSERT INTO listings (%s) VALUES %s ON CONFLICT DO NOTHING'
+      insertDb(dbCursor, insert_cmd, columns, values)
    else:
-      geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
-      db_cursor.execute(geometry_cmd)
-      geometry = db_cursor.fetchone()
-   values = [
-      property_info['listing_id'],
-      property_info['price'],
-      property_info['acres'],
-      geometry,
-      datetime.utcnow(),
-      property_info['zip_code'],
-   ]
-   insert_cmd = 'INSERT INTO listings (%s) VALUES %s ON CONFLICT DO NOTHING'
-   insertDB(insert_cmd, columns, values)
+      logging.error(f'zip code {property_info["zip_code"]} does not exist in zip_code database. url: {property_info['url']}')
 
-def insertZipCodeDB(csv_row):
-   """ Insert zip code info into database """
-   columns = ['zip_code', 'primary_city', 'state', 'county', 'latitude', 'longitude']
-   values = [csv_row['zip'], csv_row['primary_city'], csv_row['state'], csv_row['county'], csv_row['latitude'], csv_row['longitude']]
-   insert_cmd = 'INSERT INTO zip_codes (%s) VALUES %s ON CONFLICT DO NOTHING'
-   insertDB(insert_cmd, columns, values)
+def getPagination(url):
+   """get pagination if available"""
+   numPages = 1
+   headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
+   res = requests.get(url, headers=headers)
+   if res.status_code == 200:
+      soup = BeautifulSoup(res.text, 'html.parser')
+      if not soup.findAll(text='No Results Found For Your Current Search'):
+         headerText = soup.find('span', {'id': 'searchHeader'}).text
+         pages = re.findall(r'\d+', headerText[headerText.index('Page 1 of')+9:]) if 'Page 1 of' in headerText else []
+         
+         try:
+            numPages = int(pages[0]) if len(pages) else 1
+         except ValueError as e:
+            logging.error(e)
+            sys.exit(e)
+         
+   return numPages
 
-def connectDB():
-   """ Connect to the PostgreSQL database server and insert zip code info """
-   try:
-      # read connection parameters
-      params = config()
+def scrapeListingPage(stateUrlParam):
+   print(f'scrapeListingPage: {stateUrlParam["url"]}')
+   headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
+   time.sleep(.5) # is this enough sleep time to prevent rate limiting?
+   logging.info(f'Start Request: {stateUrlParam['url']}')
+   res = requests.get(stateUrlParam['url'], headers=headers)
+   if res.status_code == 200:
+      logging.info(f'Request status {res.status_code}: {res.url}')
+      soup = BeautifulSoup(res.text, 'html.parser')
+      if not soup.findAll(text='No Results Found For Your Current Search'):
+         resultsElement = soup.find('div', {'id': 'searchResultsGrid'})
+         propertyCardElementList = resultsElement.find_all('article', {'class': 'property-card'})
+         propertyInfoList = [getPropertyInfo(propertyElement, stateUrlParam['state']) for propertyElement in propertyCardElementList]
+         for propInfo in propertyInfoList:
+            insertListingDB(propInfo)
+   else:
+      logging.error(f'Request status {res.status_code}: {res.url}')
+      logging.error(res)
 
-      # connect to the PostgreSQL server
-      global db_connection
-      db_connection = psycopg2.connect(**params)
+def scrapeStatePages(state):
+   print(f'scrapeStatePages: {state["name"]}')
 
-      # create a cursor
-      global db_cursor
-      db_cursor = db_connection.cursor()
-
-   except (Exception, psycopg2.DatabaseError) as error:
-      clean_up()
-      sys.exit(error)
-
-def useZip(row):
-   return row['type'] == 'STANDARD' and row['state'] in STATES_LIST
-
-def main():
    BASE_URL = 'https://www.landandfarm.com/search/'
    min_acre = 5
-   max_acre = 100
+   max_acre = 60
    min_price = 5000
-   max_price = 40000
-   num_zip_codes = 0
+   max_price = 30000
+   request_url = f'{BASE_URL}{state["name"]}-land-for-sale/?MinAcreage={min_acre}&MaxAcreage={max_acre}&MinPrice={min_price}&MaxPrice={max_price}'
+   scrapeListingPage({'state': state, 'url': request_url})
 
-   create_tables()
-   connectDB()
+   # if this is the first page check for pagination and scrape the next pages results
+   pagination = getPagination(request_url)
 
-   with open('../zip_code_database.csv', newline='') as csvfile:
-      reader = csv.DictReader(csvfile, delimiter=',')
+   threads = min(MAX_THREADS, pagination)
+   with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+      mapList = list(map(lambda num: {'state': state, 'url': request_url+f'&CurrentPage={num}'}, range(2, pagination+1)))
+      executor.map(scrapeListingPage, mapList)
+      # executor.shutdown(wait=True)
 
-      # get number of valid zip codes to search
-      num_zip_codes = sum([1 if useZip(row) else 0 for row in reader])
+def main():
+   createTables()
 
-      # init progressBar
-      printProgressBar(0, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
-
-      # reset csv iterator
-      csvfile.seek(0);
-
-      # TODO: REMOVE!!!!
-      # temporarily jump to item 6880 as that's where error occured last night
-      # csvfile.seek(6880);
-      # num_zip_codes -= 6880
-
-      # init proxies list
-      proxies = get_proxies({'User-Agent': random.choice(USER_AGENT_LIST)})
-
-      index = 0
-      for row in reader:
-         if useZip(row):
-            insertZipCodeDB(row)
-            request_url = f'{BASE_URL}{row["state"]}/{row["zip"]}-land-for-sale/?MinAcreage={min_acre}&MaxAcreage={max_acre}&MinPrice={min_price}&MaxPrice={max_price}'
-            # get random user-agent
-            headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
-            # get proxies intermittently
-            if index % 100:
-               proxies = get_proxies(headers)
-            # use cycle_proxies to get request object from proxied server
-            req = cycle_proxies(proxies, request_url, headers)
-
-            if req.status_code == 200:
-               soup = BeautifulSoup(req.text, 'html.parser')
-               if not soup.findAll(text='No Results Found For Your Current Search'):
-                  results_el = soup.find('div', {'id': 'searchResultsGrid'})
-                  property_card_el_list = results_el.find_all('article', {'class': 'property-card'})
-                  property_info_list = [getPropertyInfo(prop_el, row['state'], row['zip']) for prop_el in property_card_el_list]
-                  for prop_info in property_info_list:
-                     insertListingDB(prop_info)
-
-                  printProgressBar(index, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
-                  index += 1
-            else:
-               logging.error(f'Request not 200: {request_url}')
-
-      # progress complete
-      printProgressBar(num_zip_codes, num_zip_codes, prefix='Progress', suffix='Complete', length=50)
-
-      clean_up()
+   for state in STATES_LIST:
+      scrapeStatePages(state)
 
 if __name__ =='__main__':
-   logging.basicConfig(filename='scrape_landandfarm.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-   logging.info('TEST LOGGING')
+   logFileName = f'log/scrape_landandfarm_{str(datetime.now()).replace(" ", "_")}.log'
+   logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
    main()
-

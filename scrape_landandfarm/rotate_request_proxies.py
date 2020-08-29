@@ -29,17 +29,17 @@ def cycle_proxies(proxies, url, headers={}):
     logging.info(f'URL: {url}')
     logging.info(f'HEADERS: {headers}')
     # url = 'https://httpbin.org/ip'
-    for i in range(1,len(proxies)):
+    for i in range(1,len(proxies)+1):
         #Get a proxy from the pool
         proxy = next(proxy_pool)
-        logging.debug(f'Proxy {i}: {proxy}')
+        logging.info(f'Proxy {i}: {proxy}')
 
         try:
-            response = requests.get(url,headers=headers,proxies={"https": proxy})
+            response = requests.get(url, headers=headers, proxies={"http": proxy, "https": proxy})
             return response
         except:
             # most free proxies will often get connection errors.
             # retry the entire request using another proxy to work. 
 
-            if i == (len(proxies) -1):
+            if i == (len(proxies)):
                 logging.error(f'URL FAILED after {i} proxy attempts: {url}')

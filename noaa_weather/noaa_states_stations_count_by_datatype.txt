@@ -1,0 +1,700 @@
+
+Alabama
+MMNT station count: 119
+MMXT station count: 119
+MNTM station count: 119
+TAVG station count: 121
+TMIN station count: 123
+TMAX station count: 123
+SNOW station count: 399
+PRCP station count: 520
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.7706885898490982
+
+Alaska
+SNOW station count: 137
+PRCP station count: 244
+MMNT station count: 291
+MMXT station count: 291
+MNTM station count: 291
+TMIN station count: 360
+TMAX station count: 360
+TAVG station count: 360
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Arizona
+TAVG station count: 227
+MMNT station count: 228
+MMXT station count: 228
+MNTM station count: 228
+TMIN station count: 234
+TMAX station count: 234
+SNOW station count: 746
+PRCP station count: 853
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 3.299831645537222
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.424387760663549
+
+Arkansas
+MMNT station count: 114
+MMXT station count: 114
+MNTM station count: 114
+TAVG station count: 118
+TMIN station count: 120
+TMAX station count: 120
+SNOW station count: 504
+PRCP station count: 535
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.7900634426665335
+
+California
+TAVG station count: 640
+MMNT station count: 645
+MNTM station count: 645
+MMXT station count: 646
+TMIN station count: 651
+TMAX station count: 652
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.4714045207910317
+Standard Dev TMIN, TMAX, TAVG: 5.436502143433363
+Standard Dev % of MMNT, MMXT, MNTM average: 0.07304822119695738
+Standard Dev % of TMIN, TMAX, TAVG average: 0.8393981693412295
+
+Colorado
+MMNT station count: 379
+MMXT station count: 379
+MNTM station count: 379
+TAVG station count: 389
+TMIN station count: 390
+TMAX station count: 390
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.12097635264098333
+
+Connecticut
+MMNT station count: 26
+MMXT station count: 26
+MNTM station count: 26
+TMIN station count: 28
+TMAX station count: 28
+TAVG station count: 28
+SNOW station count: 188
+PRCP station count: 199
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Delaware
+MMNT station count: 5
+MMXT station count: 5
+MNTM station count: 5
+TMIN station count: 6
+TMAX station count: 6
+TAVG station count: 6
+SNOW station count: 80
+PRCP station count: 82
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Florida
+TAVG station count: 172
+MMNT station count: 174
+MMXT station count: 174
+MNTM station count: 174
+TMIN station count: 176
+TMAX station count: 177
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 2.160246899469287
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.2344267996967353
+
+Georgia
+TAVG station count: 139
+MMNT station count: 142
+MMXT station count: 142
+MNTM station count: 142
+TMIN station count: 144
+TMAX station count: 144
+SNOW station count: 622
+PRCP station count: 680
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 2.3570226039551585
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.6559877779544436
+
+Hawaii
+TAVG station count: 65
+MMNT station count: 78
+MMXT station count: 78
+MNTM station count: 78
+SNOW station count: 81
+TMIN station count: 82
+TMAX station count: 82
+PRCP station count: 267
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 8.013876853447538
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 10.498528628970574
+
+Idaho
+SNOW station count: 260
+MMNT station count: 268
+MMXT station count: 268
+MNTM station count: 268
+TAVG station count: 275
+TMIN station count: 276
+TMAX station count: 276
+PRCP station count: 354
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.17100526751790748
+
+Illinois
+MMNT station count: 141
+MMXT station count: 141
+MNTM station count: 141
+TAVG station count: 143
+TMIN station count: 144
+TMAX station count: 144
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.32812379637426803
+
+Indiana
+TAVG station count: 97
+MMNT station count: 98
+MMXT station count: 98
+MNTM station count: 98
+TMIN station count: 100
+TMAX station count: 100
+SNOW station count: 756
+PRCP station count: 823
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.4284985478516112
+
+Iowa
+TAVG station count: 141
+MMNT station count: 141
+MMXT station count: 141
+MNTM station count: 141
+TMIN station count: 143
+TMAX station count: 143
+SNOW station count: 507
+PRCP station count: 560
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.6623951111817775
+
+Kansas
+MMNT station count: 165
+MMXT station count: 165
+MNTM station count: 165
+TAVG station count: 167
+TMIN station count: 169
+TMAX station count: 169
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.5600845791576613
+
+Kentucky
+TAVG station count: 97
+MMNT station count: 99
+MMXT station count: 99
+MNTM station count: 99
+TMIN station count: 103
+TMAX station count: 103
+SNOW station count: 334
+PRCP station count: 386
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 2.8284271247461903
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 2.800422895788307
+
+Louisiana
+TAVG station count: 86
+MMNT station count: 86
+MMXT station count: 86
+MNTM station count: 86
+TMIN station count: 88
+TMAX station count: 88
+SNOW station count: 226
+PRCP station count: 308
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.0795523376893856
+
+Maine
+MMNT station count: 70
+MMXT station count: 70
+MNTM station count: 70
+TMIN station count: 73
+TMAX station count: 73
+TAVG station count: 73
+SNOW station count: 249
+PRCP station count: 261
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Maryland
+TAVG station count: 33
+MMNT station count: 34
+MMXT station count: 34
+MNTM station count: 34
+TMIN station count: 35
+TMAX station count: 35
+SNOW station count: 282
+PRCP station count: 295
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 2.7460457521807666
+
+Massachusetts
+MMNT station count: 63
+MMXT station count: 63
+MNTM station count: 63
+TAVG station count: 67
+TMIN station count: 68
+TMAX station count: 68
+SNOW station count: 334
+PRCP station count: 354
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.6966569272773867
+
+Michigan
+MMXT station count: 202
+MNTM station count: 202
+MMNT station count: 203
+TAVG station count: 206
+TMIN station count: 211
+TMAX station count: 211
+SNOW station count: 646
+PRCP station count: 677
+Standard Dev MMNT, MMXT, MNTM: 0.4714045207910317
+Standard Dev TMIN, TMAX, TAVG: 2.3570226039551585
+Standard Dev % of MMNT, MMXT, MNTM average: 0.23298411241731384
+Standard Dev % of TMIN, TMAX, TAVG average: 1.1259662120804896
+
+Minnesota
+MMNT station count: 187
+MNTM station count: 187
+MMXT station count: 188
+TAVG station count: 190
+TMIN station count: 191
+TMAX station count: 192
+SNOW station count: 855
+PRCP station count: 915
+Standard Dev MMNT, MMXT, MNTM: 0.4714045207910317
+Standard Dev TMIN, TMAX, TAVG: 0.816496580927726
+Standard Dev % of MMNT, MMXT, MNTM average: 0.2516394239098034
+Standard Dev % of TMIN, TMAX, TAVG average: 0.4274851209045686
+
+Mississippi
+MMNT station count: 89
+MMXT station count: 89
+MNTM station count: 89
+TAVG station count: 90
+TMIN station count: 92
+TMAX station count: 92
+SNOW station count: 289
+PRCP station count: 308
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.032272673265033
+
+Missouri
+TAVG station count: 168
+MMNT station count: 168
+MMXT station count: 168
+MNTM station count: 168
+TMIN station count: 171
+TMAX station count: 171
+SNOW station count: 801
+PRCP station count: 833
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.831890330807703
+
+Montana
+MMNT station count: 382
+MMXT station count: 382
+MNTM station count: 382
+TAVG station count: 390
+TMIN station count: 393
+TMAX station count: 393
+SNOW station count: 455
+PRCP station count: 567
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.36076876591150386
+
+Nebraska
+MMNT station count: 163
+MMXT station count: 163
+MNTM station count: 163
+TAVG station count: 166
+TMIN station count: 167
+TMAX station count: 167
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.282842712474619
+
+Nevada
+MMNT station count: 193
+MMXT station count: 193
+MNTM station count: 193
+TAVG station count: 198
+TMIN station count: 199
+TMAX station count: 199
+SNOW station count: 232
+PRCP station count: 294
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.23728415476058645
+
+New Hampshire
+MMNT station count: 52
+MMXT station count: 52
+MNTM station count: 52
+TAVG station count: 59
+TMIN station count: 61
+TMAX station count: 61
+SNOW station count: 171
+PRCP station count: 185
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.5626669197492762
+
+New Jersey
+MMNT station count: 36
+MMXT station count: 36
+MNTM station count: 36
+TAVG station count: 38
+TMIN station count: 40
+TMAX station count: 40
+SNOW station count: 421
+PRCP station count: 443
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 2.396972139615415
+
+New Mexico
+MMNT station count: 170
+MMXT station count: 170
+MNTM station count: 170
+TAVG station count: 172
+TMIN station count: 175
+TMAX station count: 175
+SNOW station count: 979
+PRCP station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.8127664151569511
+
+New York
+MNTM station count: 154
+MMNT station count: 155
+MMXT station count: 156
+TAVG station count: 159
+TMIN station count: 166
+TMAX station count: 167
+SNOW station count: 715
+PRCP station count: 746
+Standard Dev MMNT, MMXT, MNTM: 0.816496580927726
+Standard Dev TMIN, TMAX, TAVG: 3.559026084010437
+Standard Dev % of MMNT, MMXT, MNTM average: 0.5267719876953072
+Standard Dev % of TMIN, TMAX, TAVG average: 2.170137856103925
+
+North Carolina
+MMNT station count: 203
+MMXT station count: 203
+MNTM station count: 203
+TAVG station count: 208
+TMIN station count: 210
+TMAX station count: 210
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.45038648483219584
+
+North Dakota
+TAVG station count: 99
+MMNT station count: 100
+MMXT station count: 100
+MNTM station count: 100
+TMIN station count: 101
+TMAX station count: 101
+SNOW station count: 251
+PRCP station count: 275
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.9396767856299636
+
+Ohio
+MMNT station count: 107
+MMXT station count: 107
+MNTM station count: 107
+TAVG station count: 112
+TMIN station count: 114
+TMAX station count: 114
+SNOW station count: 515
+PRCP station count: 583
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.831890330807703
+
+Oklahoma
+TAVG station count: 132
+TMIN station count: 133
+TMAX station count: 133
+MMNT station count: 133
+MMXT station count: 133
+MNTM station count: 133
+SNOW station count: 442
+PRCP station count: 550
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.35533004079726005
+
+Oregon
+TAVG station count: 360
+MMNT station count: 361
+MMXT station count: 361
+MNTM station count: 361
+TMIN station count: 362
+TMAX station count: 362
+SNOW station count: 797
+PRCP station count: 911
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.26092501150795117
+
+Pennsylvania
+TAVG station count: 143
+MMNT station count: 145
+MMXT station count: 145
+MNTM station count: 145
+TMIN station count: 146
+TMAX station count: 146
+SNOW station count: 561
+PRCP station count: 585
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.9753196981883415
+
+Rhode Island
+MMNT station count: 9
+MMXT station count: 9
+MNTM station count: 9
+TMIN station count: 10
+TMAX station count: 10
+TAVG station count: 10
+SNOW station count: 72
+PRCP station count: 80
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+South Carolina
+MMNT station count: 91
+MMXT station count: 91
+MNTM station count: 91
+TMIN station count: 99
+TMAX station count: 99
+TAVG station count: 99
+SNOW station count: 777
+PRCP station count: 852
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+South Dakota
+MMNT station count: 146
+MMXT station count: 146
+MNTM station count: 146
+TMIN station count: 150
+TMAX station count: 150
+TAVG station count: 150
+SNOW station count: 512
+PRCP station count: 579
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Tennessee
+TAVG station count: 164
+MMNT station count: 165
+MMXT station count: 165
+MNTM station count: 165
+TMIN station count: 167
+TMAX station count: 167
+SNOW station count: 670
+PRCP station count: 696
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 1.4142135623730951
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.8519358809476476
+
+Texas
+MMNT station count: 444
+MNTM station count: 444
+MMXT station count: 445
+TAVG station count: 450
+TMIN station count: 454
+TMAX station count: 456
+PRCP station count: 1000
+SNOW station count: 1000
+Standard Dev MMNT, MMXT, MNTM: 0.4714045207910317
+Standard Dev TMIN, TMAX, TAVG: 2.494438257849294
+Standard Dev % of MMNT, MMXT, MNTM average: 0.10609254031306038
+Standard Dev % of TMIN, TMAX, TAVG average: 0.550243733349109
+
+Utah
+SNOW station count: 262
+MMNT station count: 312
+MMXT station count: 312
+MNTM station count: 312
+TMIN station count: 319
+TMAX station count: 319
+TAVG station count: 319
+PRCP station count: 406
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Vermont
+TAVG station count: 43
+MMNT station count: 43
+MMXT station count: 43
+MNTM station count: 43
+TMIN station count: 44
+TMAX station count: 44
+SNOW station count: 168
+PRCP station count: 171
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 1.0795523376893856
+
+Virginia
+MMNT station count: 118
+MMXT station count: 118
+MNTM station count: 118
+TAVG station count: 119
+TMIN station count: 121
+TMAX station count: 121
+SNOW station count: 557
+PRCP station count: 586
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.7834978184892493
+
+Washington
+MMNT station count: 245
+MMXT station count: 245
+MNTM station count: 245
+TAVG station count: 246
+TMIN station count: 248
+TMAX station count: 248
+SNOW station count: 689
+PRCP station count: 808
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.9428090415820634
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.3811896394536644
+
+West Virginia
+TMIN station count: 85
+TMAX station count: 85
+TAVG station count: 85
+MMNT station count: 85
+MMXT station count: 85
+MNTM station count: 85
+SNOW station count: 165
+PRCP station count: 172
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0
+
+Wisconsin
+TAVG station count: 186
+MMNT station count: 186
+MMXT station count: 186
+MNTM station count: 186
+TMIN station count: 187
+TMAX station count: 187
+SNOW station count: 673
+PRCP station count: 703
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.4714045207910317
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.2525381361380527
+
+Wyoming
+MMNT station count: 239
+MMXT station count: 239
+MNTM station count: 239
+TMIN station count: 244
+TMAX station count: 244
+TAVG station count: 244
+SNOW station count: 510
+PRCP station count: 629
+Standard Dev MMNT, MMXT, MNTM: 0.0
+Standard Dev TMIN, TMAX, TAVG: 0.0
+Standard Dev % of MMNT, MMXT, MNTM average: 0.0
+Standard Dev % of TMIN, TMAX, TAVG average: 0.0

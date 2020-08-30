@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Print iterations progress
-# source: https://gist.github.com/aubricus/print_progress.py
+# source: https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     """

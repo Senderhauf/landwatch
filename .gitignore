@@ -3,7 +3,7 @@ log/
 docs/someday.txt
 
 # data files
-demographics/zip_code_data.csv
+demographics/*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

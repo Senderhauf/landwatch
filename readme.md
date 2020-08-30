@@ -22,30 +22,29 @@ docker-compose up --build
 
 ## Access
 
-While development of the dashboard is in progress, please use pgAdmin to access the PostgreSQL data served to your [browser](http://localhost:8080 "Landwatch Pgadmin")
+While development of the dashboard is in progress, please use pgAdmin to access the PostgreSQL data served to your [browser](http://localhost:8080 "Landwatch Pgadmin").
 
-Use email "admin@email.com" and password "secret" to login.
+1. Use email "admin@email.com" and password "secret" to login.
+...Once logged in, you should see the pgAdmin dashboard.
 
-Once logged in, you should see the pgAdmin dashboard.
+2. Now, to add the PostgreSQL server running as a Docker container, right click on **Servers**, and then go to **Create** > **Server...**
 
-Now, to add the PostgreSQL server running as a Docker container, right click on **Servers**, and then go to **Create** > **Server...**
+3. In the **General** tab, type in your server **Name**.
 
-In the **General** tab, type in your server **Name**.
+4. Now, go to the **Connection** tab and type in pgsql-server as **Host name/address**, 5432 as **Port**, postgres as **Maintenance database**, postgres as **Username**, postgres as **Password** and check **Save password?** checkbox. Then, click on **Save**.
 
-Now, go to the **Connection** tab and type in pgsql-server as **Host name/address**, 5432 as **Port**, postgres as **Maintenance database**, postgres as **Username**, postgres as **Password** and check **Save password?** checkbox. Then, click on **Save**.
+5. Click on **Servers** > **server-name** > **Databases** > **landwatch** > **Schemas** > **public** > **Tables** to see the available tables.
 
-Click on **Servers** > **server-name** > **Databases** > **landwatch** > **Schemas** > **public** > **Tables** to see the available tables.
-
-In the top toolbar select **Tools** > **Query Tool** and try running the following queries to see Beverly Hills data:
+6. In the top toolbar select **Tools** > **Query Tool** and try running the following queries to see Beverly Hills data:
 
 ```sql
-select * from zip_codes order by 90210;
+select * from zip_codes where zip_code like "90210";
 ```
 
 ```sql
-select * from zip_demographics order by 90210;
+select * from zip_demographics where zip_code like "90210";
 ```
 
 ```sql
-select * from zip_households order by 90210;
+select * from zip_households where zip_code like "90210";
 ```

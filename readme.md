@@ -14,6 +14,8 @@ Checkout the [Backlog](./planning.org) to see planning and progress.
 
 This project uses [Docker](https://docs.docker.com/ "Docker Documentation") and [Docker Compose](https://github.com/docker/compose "Docker Compose Repository"). Please install and configure these as you see fit.
 
+Ports 5432 and 8080 must be free on the host machine for postgreSQL and pgAdmin, respectively, to run correctly.
+
 In the top level directory, run the following command to start:
 
 ```shell

@@ -12,7 +12,7 @@ Checkout the [Backlog](./planning.org) to see planning and progress.
 
 ## Run
 
-This project uses [Docker](https://docs.docker.com/ "Docker Documentation") and[Docker Compose](https://github.com/docker/compose "Docker Compose Repository"). Please install and configure these as you see fit.
+This project uses [Docker](https://docs.docker.com/ "Docker Documentation") and [Docker Compose](https://github.com/docker/compose "Docker Compose Repository"). Please install and configure these as you see fit.
 
 In the top level directory, run the following command to start:
 
@@ -22,7 +22,7 @@ docker-compose up --build
 
 ## Access
 
-While development of the dashboard is in progress, please use pgAdmin to access the PostgreSQL data served to your [browser](http://localhost:8080 "Landwatch Pgadmin").
+While development of the dashboard is in progress, please use [pgAdmin](https://www.pgadmin.org/  "pgAdmin Homepage") on your browser to access the [PostgreSQL](https://www.postgresql.org/ "PostgreSQL Homepage") data served to your [localhost](http://localhost:8080 "Landwatch Pgadmin").
 
 1. Use email "admin@email.com" and password "secret" to login.
 ...Once logged in, you should see the pgAdmin dashboard.

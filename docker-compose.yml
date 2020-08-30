@@ -32,7 +32,7 @@ services:
       - db
     environment:
       PGADMIN_LISTEN_PORT: 80
-      PGADMIN_DEFAULT_EMAIL: centerhauf@gmail.com
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
       PGADMIN_DEFAULT_PASSWORD: secret
     ports:
       - "8080:80"

@@ -10,7 +10,7 @@ python3 -m demographics.populate_states_db
 python3 -m demographics.populate_zip_code_db
 
 # initialize weather data
-# python3 -m noaa_weather.populate_noaa_weather_db
+python3 -m noaa_weather.populate_noaa_weather_db
 
 # scrape landandfarm listings
-# python3 -m scrape_landandfarm.scrape_landandfarm
+python3 -m scrape_landandfarm.scrape_landandfarm

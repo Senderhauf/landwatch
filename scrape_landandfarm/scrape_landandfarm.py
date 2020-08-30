@@ -9,7 +9,7 @@ from datetime import datetime
 import logging
 import random
 import sys
-from db_config.db_config import config, createTables
+from db_config.db_config import config
 import time
 import concurrent.futures
 
@@ -98,17 +98,6 @@ def getDbCursor():
    except (Exception, psycopg2.DatabaseError) as error:
       logging.error(error);
       sys.exit(error)
-
-def getZipGeography(dbCursor, zip_code):
-   if (not zip_code):
-      return
-   dbCursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{zip_code}\'')
-   lat_long = dbCursor.fetchone()
-   latitude = lat_long[0]
-   longitude = lat_long[1]
-   geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)'
-   dbCursor.execute(geometry_cmd)
-   return dbCursor.fetchone();
    
 def getAttribute(element, attribute):
    try:
@@ -158,14 +147,19 @@ def insertListingDB(property_info):
    dbCursor = getDbCursor()
 
    # check zip_code is valid
-   dbCursor.execute(f'SELECT latitude, longitude FROM zip_codes WHERE zip_code LIKE \'{property_info["zip_code"]}\'')
-   zipCodeFromDb = dbCursor.fetchone()
-   if (zipCodeFromDb):
-      columns = ['listing_id', 'price', 'acres', 'geog', 'insert_date', 'zip_code', 'price_per_acre', 'url']
+   dbCursor.execute(f'SELECT approximate_latitude, approximate_longitude FROM zip_codes WHERE zip_code LIKE \'{property_info["zip_code"]}\'')
+   lat_long = dbCursor.fetchone()
+   
+   if (lat_long):
+      columns = ['listing_id', 'price', 'acres', 'geog', 'latitude', 'longitude', 'insert_date', 'zip_code', 'price_per_acre', 'url']
       # get geometry value from lat and long
       geometry = None;
       if property_info['longitude'] is None or property_info['latitude'] is None:
-         geometry = getZipGeography(dbCursor, property_info['zip_code'])
+         latitude = lat_long[0]
+         longitude = lat_long[1]
+         geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)'
+         dbCursor.execute(geometry_cmd)
+         geometry = dbCursor.fetchone();
       else:
          geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
          dbCursor.execute(geometry_cmd)
@@ -175,6 +169,8 @@ def insertListingDB(property_info):
          property_info['price'],
          property_info['acres'],
          geometry,
+         property_info['latitude'],
+         property_info['longitude'],
          datetime.utcnow(),
          property_info['zip_code'],
          property_info['price']/property_info['acres'],
@@ -183,7 +179,7 @@ def insertListingDB(property_info):
       insert_cmd = 'INSERT INTO listings (%s) VALUES %s ON CONFLICT DO NOTHING'
       insertDb(dbCursor, insert_cmd, columns, values)
    else:
-      logging.error(f'zip code {property_info["zip_code"]} does not exist in zip_code database. url: {property_info['url']}')
+      logging.error(f'zip code {property_info["zip_code"]} does not exist in zip_code database. url: {property_info["url"]}')
 
 def getPagination(url):
    """get pagination if available"""
@@ -208,7 +204,7 @@ def scrapeListingPage(stateUrlParam):
    print(f'scrapeListingPage: {stateUrlParam["url"]}')
    headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
    time.sleep(.5) # is this enough sleep time to prevent rate limiting?
-   logging.info(f'Start Request: {stateUrlParam['url']}')
+   logging.info(f'Start Request: {stateUrlParam["url"]}')
    res = requests.get(stateUrlParam['url'], headers=headers)
    if res.status_code == 200:
       logging.info(f'Request status {res.status_code}: {res.url}')
@@ -244,8 +240,6 @@ def scrapeStatePages(state):
       # executor.shutdown(wait=True)
 
 def main():
-   createTables()
-
    for state in STATES_LIST:
       scrapeStatePages(state)
 

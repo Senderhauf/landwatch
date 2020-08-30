@@ -1,22 +1,22 @@
-#NOAA Weather
+# NOAA Weather
 
 This directory contains data and the means to gather it from NOAA
 
-The data is availab e at NOAA's [Climate Data Online Search](https://www.ncdc.noaa.gov/cdo-web/search)
+The data is available at NOAA's [Climate Data Online Search](https://www.ncdc.noaa.gov/cdo-web/search)
 
-See this directorys [Org-mode](./planning.org) to see planning and progress. 
+See this directory's [Org-mode](./planning.org) to see planning and progress. 
 
-##NOAA API
+## NOAA API
 
 See documentation at [https://www.ncdc.noaa.gov/cdo-web/webservices/v2](https://www.ncdc.noaa.gov/cdo-web/webservices/v2)
 
-API Call
+API call example:
 
 ```shell
 curl -H "token:QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/datatypes" | json_pp
 ```
 
-Output (truncated)
+Output (truncated):
 
 ```json
 {
@@ -54,13 +54,13 @@ Output (truncated)
 }
 ```
 
-API call
+API call example:
 
 ```shell
  curl -H "token:QYumHTESHvMktBsArZIjYseYqPxbHiom" "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GSOM&startdate=2010-01-01&enddate=2010-01-01&locationid=FIPS:US&locationid=ZIP:00001" | json_pp
 ```
 
-Output (truncated)
+Output (truncated):
 
 ```json
 {

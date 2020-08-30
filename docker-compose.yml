@@ -9,15 +9,15 @@ services:
     volumes:
       - .:/usr/src/app
     environment:
-      DATABASE_URL: postgres://psql_docker@db/landwatch
+      DATABASE_URL: postgres://postgres@db/landwatch
 
   db:
     image: postgis/postgis:12-3.0-alpine
     restart: always
     environment:
-      POSTGRES_USER: psql_docker
+      # POSTGRES_USER: psql_docker
       POSTGRES_DB: landwatch
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data
     volumes:
       # - ./db_config/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -28,6 +28,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4:4
     restart: always
+    depends_on:
+      - db
     environment:
       PGADMIN_LISTEN_PORT: 80
       PGADMIN_DEFAULT_EMAIL: centerhauf@gmail.com

@@ -27,7 +27,7 @@ docker-compose up --build
 While development of the dashboard is in progress, please use [pgAdmin](https://www.pgadmin.org/  "pgAdmin Homepage") on your browser to access the [PostgreSQL](https://www.postgresql.org/ "PostgreSQL Homepage") data served to your [localhost](http://localhost:8080 "Landwatch Pgadmin").
 
 1. Use email "admin@email.com" and password "secret" to login.
-...Once logged in, you should see the pgAdmin dashboard.
+... Once logged in, you should see the pgAdmin dashboard.
 
 2. Now, to add the PostgreSQL server running as a Docker container, right click on **Servers**, and then go to **Create** > **Server...**
 

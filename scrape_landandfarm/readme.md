@@ -5,14 +5,18 @@ Landandfarm does not offer a public api. Therefore it is necessary to find listi
 The urls contain query parameters that allow for easier extraction of filtered data as well as well-defined routes for searching states and zip codes. 
 
 Here is an example url:
->https://www.landandfarm.com/search/AL/35004-land-for-sale/?MinPrice=5000&MaxPrice=25000
+>https://www.landandfarm.com/search/AL/35004-land-for-sale/?MinPrice=5000&MaxPrice=25000&MinAcreage=5&MaxAcreage=60
 
 The following query string parameters are of note:
 
-1. MinPrice
-...Minimum price
-2. MaxPrice
-...Maximum Price
+1. MinPrice.
+... Minimum price
+2. MaxPrice.
+... Maximum Price
+3. MinAcreage.
+... Minimum amount of Acres
+3. MaxAcreage.
+... Maximum amount of Acres
 
 ## Structure
 

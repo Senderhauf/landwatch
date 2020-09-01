@@ -34,8 +34,8 @@ ZIP_CODES_COLUMNS = [
    'latitude_max',
    'longitude_min',
    'longitude_max',
-   'area_land',
-   'area_water'
+   'area_land_sqaure_meters',
+   'area_water_sqaure_meters'
 ]
 
 ZIP_DEMOGRAPHICS_COLUMNS = [

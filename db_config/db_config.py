@@ -57,8 +57,8 @@ def createTables():
             latitude_max DOUBLE PRECISION,
             longitude_min DOUBLE PRECISION,
             longitude_max DOUBLE PRECISION,
-            area_land BIGINT,
-            area_water BIGINT,
+            area_land_sqaure_meters BIGINT,
+            area_water_sqaure_meters BIGINT,
             FOREIGN KEY (state_abrev)
                 REFERENCES states (state_abrev)
                 ON UPDATE CASCADE ON DELETE CASCADE
@@ -179,6 +179,41 @@ def createTables():
             FOREIGN KEY (zip_code)
                 REFERENCES zip_codes (zip_code)
                 ON UPDATE CASCADE ON DELETE CASCADE
+        )
+        """
+        """
+        CREATE TABLE IF NOT EXISTS noaa_weather_stations (
+            station_id VARCHAR(50) PRIMARY KEY,
+            zip_code CHAR(5) NOT NULL,
+            elevation INTEGER 249,
+            mindate DATE,
+            maxdate DATE,
+            name VARCHAR(50),
+            datacoverage DECIMAL,
+            elevationUnit VARCHAR(25),
+            latitude DOUBLE PRECISION NOT NULL,
+            longitude DOUBLE PRECISION NOT NULL,
+            FOREIGN KEY (zip_code)
+                REFERENCES zip_codes (zip_code)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS noaa_weather_monthly (
+            entry_id 
+            station_id VARCHAR(50) NOT NULL,
+            month
+            year
+            average_temp
+            average_min_temp
+            average_max_temp
+            snow_inches
+            precipitation_inches
+            FOREIGN KEY (station_id)
+                REFERENCES noaa_weather_stations (station_id)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE
         )
         """
     )

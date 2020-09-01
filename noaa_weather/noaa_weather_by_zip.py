@@ -42,13 +42,27 @@ def getDbCursor():
       sys.exit(error)
 
 def get_results(res):
+   results_list = []
    if res.status_code == 200:
       res_dict = json.loads(res.text)
       if 'results' in res_dict:
-         return res_dict['results']
+         results_list = res_dict['results']
+   return results_list
 
-def get_stations_for_state(state_id, dataset_id, start_date, end_date, datatypeid):
-   url = f'https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid={state_id}&datasetid={dataset_id}&startdate={start_date}&enddate={end_date}&limit=1000&datatypeid={datatypeid}'
+def get_results_set_count(res):
+   results_count = 0
+   if res.status_code == 200:
+      res_dict = json.loads(res.text)
+      if 'metadata' in res_dict:
+         if 'resultset' in res_dict['metadata']:
+            if 'count' in res_dict['metadata']['resultset']:
+               results_count = res_dict['metadata']['resultset']['count']
+   return results_count
+def get_stations_for_state(state_id, dataset_id, start_date, end_date, datatypeid_list=[]):
+   url = f'https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?locationid={state_id}&datasetid={dataset_id}&startdate={start_date}&enddate={end_date}&limit=1000'
+   for datatypeid in datatypeid_list:
+      url = url + f'&datatypeid={datatypeid}'
+   print(url)
    res = requests.get(url, headers={'token': TOKEN})
    stations_list = get_results(res)
    return stations_list if stations_list else []
@@ -71,7 +85,30 @@ def get_standard_dev(num_list):
    mean = get_mean(num_list)
    variance = sum([((x - mean) ** 2) for x in num_list]) / len(num_list) 
    return variance ** 0.5
+
+def get_datatype_count(station_id, dataset_id, start_date, end_date):
+   url = f'https://www.ncdc.noaa.gov/cdo-web/api/v2/data?stationid={station_id}&datasetid={dataset_id}&startdate={start_date}&enddate={end_date}&limit=1000'
+   print(url)
+   res = requests.get(url, headers={'token': TOKEN})
+   datapoints = get_results(res)
+   result_set_count = get_results_set_count(res)
+   while len(datapoints) < result_set_count:
+      res = requests.get(url+f'&offset={len(datapoints)}', headers={'token': TOKEN})
+      datapoints = datapoints + get_results(res)
+
+   print(f'Number Datapoints: {len(datapoints)}')
+
+   station_datatype_counts = {}
+   for datapoint in datapoints:
+      datatype = datapoint['datatype']
+      if datatype in station_datatype_counts:
+         station_datatype_counts[datatype] = station_datatype_counts[datatype] + 1
+      else:
+         station_datatype_counts[datatype] = 1
    
+   print(station_datatype_counts)
+   return station_datatype_counts
+
 def write_stations_count_by_datatype_to_file():
    states_list = get_state_info_list()
    # stations_by_state = {}
@@ -115,6 +152,32 @@ def write_stations_count_by_datatype_to_file():
             {'elevation': 249.3, 'mindate': '1938-03-01', 'maxdate': '2020-08-22', 'latitude': 34.2553, 'name': 'ADDISON, AL US', 'datacoverage': 0.4768, 'id': 'GHCND:USC00010063', 'elevationUnit': 'METERS', 'longitude': -87.1814}
          """
 
+def write_datatype_count_by_stations_to_file():
+   """ write the number of stations with each datatype available """
+   states_list = get_state_info_list()
+   with open('./noaa_weather/noaa_datatype_count_by_state_stations.txt', 'w') as stations_file:
+      for state in states_list:
+         if state['name'] != 'California':
+            continue
+
+         print(state['name'])
+         stations_file.write('\n')
+         stations_file.write(f'{state["name"]}')
+         stations_file.write('\n')
+         state_datatype_count_list = []
+
+         dataset_id = 'GHCND'
+         start_date = '2019-01-01'
+         end_date = '2020-01-01'
+
+         state_stations_list = get_stations_for_state(state['id'], dataset_id, start_date, end_date)
+
+         print(f'Number of Stations: {len(state_stations_list)}')
+
+         for station in state_stations_list:
+            state_datatype_count_list = get_datatype_count(station['id'], dataset_id, start_date, end_date)
+
+
 def main():
    """
    Need following datatypes:
@@ -126,7 +189,7 @@ def main():
    states_list = get_state_info_list()
    # stations_by_state = {}
    for state in states_list:
-      state_stations_list = get_stations_for_state(state['id'], 'GHCND', '2015-01-01', '2020-01-01', 'TMIN')
+      state_stations_list = get_stations_for_state(state['id'], 'GHCND', '2015-01-01', '2020-01-01', ['TAVG', 'SNOW'])
       print(f'{state["name"]} stations count: {len(state_stations_list)}')
 
       """
@@ -135,12 +198,9 @@ def main():
          {'elevation': 249.3, 'mindate': '1938-03-01', 'maxdate': '2020-08-22', 'latitude': 34.2553, 'name': 'ADDISON, AL US', 'datacoverage': 0.4768, 'id': 'GHCND:USC00010063', 'elevationUnit': 'METERS', 'longitude': -87.1814}
       """
 
-      # TODO remove
-      if state['name'] == 'California':
-         break
-
 if __name__ =='__main__':
    # TODO enable logs
    # logFileName = f'log/noaa_weather_by_zip_{str(datetime.now()).replace(" ", "_")}.log'
    # logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
    main()
+   # write_datatype_count_by_stations_to_file()

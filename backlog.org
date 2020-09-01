@@ -1,0 +1,4 @@
+
+* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> if url in database don't scrape; 
+* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> if url isn't in database then scrape;
+* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> find way to delete old listings;

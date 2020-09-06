@@ -4,12 +4,12 @@ from bs4 import BeautifulSoup
 import re
 import psycopg2
 from psycopg2.extensions import AsIs
-from .progress_bar import printProgressBar
 from datetime import datetime
 import logging
 import random
 import sys
-from db_config.db_config import config
+from config.db_config import db_config, get_db_cursor, query_db
+from config.utils import log_config, get_request
 import time
 import concurrent.futures
 
@@ -68,37 +68,8 @@ STATES_LIST = [
    {'name': 'Wyoming', 'abrev': 'WY'}
 ]
 
-USER_AGENT_LIST = [
-   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (X11; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
-   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
-   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
-   'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
-   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
-]
-
 MAX_THREADS = 15
 
-def getDbCursor():
-   """ Connect to the PostgreSQL database server and insert zip code info """
-   try:
-      # read connection parameters
-      params = config()
-
-      # connect to the PostgreSQL server
-      global dbConnection
-      dbConnection = psycopg2.connect(**params)
-      return dbConnection.cursor()
-
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(error);
-      sys.exit(error)
-   
 def getAttribute(element, attribute):
    try:
       return element[attribute]
@@ -134,21 +105,13 @@ def getPropertyInfo(propertyCardElement, state):
       'url': url
    }
 
-def insertDb(dbCursor, insertCmd, columns, values):
-   try:
-      dbCursor.execute(insertCmd, (AsIs(','.join(columns)), tuple(values)))
-      dbConnection.commit()
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(error)
-      sys.exit(error)
-
 def insertListingDB(property_info):
    """ Insert property info listings into database """
-   dbCursor = getDbCursor()
+   db_cursor = get_db_cursor()
 
    # check zip_code is valid
-   dbCursor.execute(f'SELECT approximate_latitude, approximate_longitude FROM zip_codes WHERE zip_code LIKE \'{property_info["zip_code"]}\'')
-   lat_long = dbCursor.fetchone()
+   db_cursor.execute(f'SELECT approximate_latitude, approximate_longitude FROM zip_codes WHERE zip_code LIKE \'{property_info["zip_code"]}\'')
+   lat_long = db_cursor.fetchone()
    
    if (lat_long):
       columns = ['listing_id', 'price', 'acres', 'geog', 'latitude', 'longitude', 'insert_date', 'zip_code', 'price_per_acre', 'url']
@@ -158,12 +121,12 @@ def insertListingDB(property_info):
          latitude = lat_long[0]
          longitude = lat_long[1]
          geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({longitude}, {latitude}),4326)'
-         dbCursor.execute(geometry_cmd)
-         geometry = dbCursor.fetchone();
+         db_cursor.execute(geometry_cmd)
+         geometry = db_cursor.fetchone();
       else:
          geometry_cmd = f'SELECT ST_SetSRID(ST_MakePoint({property_info["longitude"]}, {property_info["latitude"]}),4326)'
-         dbCursor.execute(geometry_cmd)
-         geometry = dbCursor.fetchone()
+         db_cursor.execute(geometry_cmd)
+         geometry = db_cursor.fetchone()
       values = [
          property_info['listing_id'],
          property_info['price'],
@@ -177,15 +140,14 @@ def insertListingDB(property_info):
          property_info['url']
       ]
       insert_cmd = 'INSERT INTO listings (%s) VALUES %s ON CONFLICT DO NOTHING'
-      insertDb(dbCursor, insert_cmd, columns, values)
+      query_db(db_cursor, insert_cmd, columns, values)
    else:
       logging.error(f'zip code {property_info["zip_code"]} does not exist in zip_code database. url: {property_info["url"]}')
 
 def getPagination(url):
    """get pagination if available"""
    numPages = 1
-   headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
-   res = requests.get(url, headers=headers)
+   res = get_request(url)
    if res.status_code == 200:
       soup = BeautifulSoup(res.text, 'html.parser')
       if not soup.findAll(text='No Results Found For Your Current Search'):
@@ -201,13 +163,8 @@ def getPagination(url):
    return numPages
 
 def scrapeListingPage(stateUrlParam):
-   print(f'scrapeListingPage: {stateUrlParam["url"]}')
-   headers = {'User-Agent': random.choice(USER_AGENT_LIST)}
-   time.sleep(.5) # is this enough sleep time to prevent rate limiting?
-   logging.info(f'Start Request: {stateUrlParam["url"]}')
-   res = requests.get(stateUrlParam['url'], headers=headers)
+   res = get_request(stateUrlParam['url'])
    if res.status_code == 200:
-      logging.info(f'Request status {res.status_code}: {res.url}')
       soup = BeautifulSoup(res.text, 'html.parser')
       if not soup.findAll(text='No Results Found For Your Current Search'):
          resultsElement = soup.find('div', {'id': 'searchResultsGrid'})
@@ -215,12 +172,9 @@ def scrapeListingPage(stateUrlParam):
          propertyInfoList = [getPropertyInfo(propertyElement, stateUrlParam['state']) for propertyElement in propertyCardElementList]
          for propInfo in propertyInfoList:
             insertListingDB(propInfo)
-   else:
-      logging.error(f'Request status {res.status_code}: {res.url}')
-      logging.error(res)
 
 def scrapeStatePages(state):
-   print(f'scrapeStatePages: {state["name"]}')
+   logging.info(f'Scrape {state["name"]} Pages...')
 
    BASE_URL = 'https://www.landandfarm.com/search/'
    min_acre = 5
@@ -244,6 +198,5 @@ def main():
       scrapeStatePages(state)
 
 if __name__ =='__main__':
-   logFileName = f'log/scrape_landandfarm_{str(datetime.now()).replace(" ", "_")}.log'
-   logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+   log_config('scrape_landandfarm')
    main()

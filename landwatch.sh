@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # create database tables
-python3 -m db_config.db_config
+python3 -m config.db_config
 
 # initialize states data
 python3 -m demographics.populate_states_db

@@ -2,11 +2,12 @@
 import psycopg2
 from configparser import ConfigParser
 import sys
-import datetime
-from datetime import datetime
 import logging
+from .utils import log_config
+import psycopg2
+from psycopg2.extensions import AsIs
 
-def config(filename='./db_config/database.ini', section='postgresql'):
+def db_config(filename='./config/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
@@ -23,7 +24,7 @@ def config(filename='./db_config/database.ini', section='postgresql'):
 
     return db
 
-def createTables():
+def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
         """
@@ -32,20 +33,21 @@ def createTables():
         """
         CREATE TABLE IF NOT EXISTS states (
             state_abrev CHAR(2) PRIMARY KEY,
-            state_name VARCHAR(25) NOT NULL
+            state_name TEXT NOT NULL,
+            UNIQUE (state_name)
         )
         """,
         """
         CREATE TABLE IF NOT EXISTS zip_codes (
             zip_code CHAR(5) PRIMARY KEY,
-            primary_city VARCHAR(50),
-            county VARCHAR(50),
-            type VARCHAR(8) NOT NULL,
+            primary_city TEXT,
+            county TEXT,
+            type TEXT NOT NULL,
             decommissioned BOOLEAN,
             acceptable_cities TEXT,
             unacceptable_cities TEXT,
-            state_abrev VARCHAR(2),
-            timezone VARCHAR(50),
+            state_abrev CHAR(2),
+            timezone TEXT,
             area_codes TEXT,
             approximate_latitude DOUBLE PRECISION NOT NULL,
             approximate_longitude DOUBLE PRECISION NOT NULL,
@@ -175,41 +177,40 @@ def createTables():
             insert_date TIMESTAMPTZ NOT NULL,
             zip_code CHAR(5) NOT NULL,
             price_per_acre INTEGER NOT NULL,
-            url VARCHAR(275) NOT NULL,
+            url TEXT NOT NULL,
             FOREIGN KEY (zip_code)
                 REFERENCES zip_codes (zip_code)
                 ON UPDATE CASCADE ON DELETE CASCADE
         )
-        """
+        """,
         """
         CREATE TABLE IF NOT EXISTS noaa_weather_stations (
             station_id VARCHAR(50) PRIMARY KEY,
-            zip_code CHAR(5) NOT NULL,
-            elevation INTEGER 249,
-            mindate DATE,
-            maxdate DATE,
-            name VARCHAR(50),
-            datacoverage DECIMAL,
-            elevationUnit VARCHAR(25),
+            elevation DECIMAL,
+            min_date DATE,
+            max_date DATE,
+            name TEXT,
+            data_coverage DECIMAL,
+            elevation_unit TEXT,
+            geog GEOGRAPHY NOT NULL,
             latitude DOUBLE PRECISION NOT NULL,
             longitude DOUBLE PRECISION NOT NULL,
-            FOREIGN KEY (zip_code)
-                REFERENCES zip_codes (zip_code)
+            state_name TEXT NOT NULL,
+            state_fips_id CHAR(7) NOT NULL,
+            FOREIGN KEY (state_name)
+                REFERENCES states (state_name)
                 ON UPDATE CASCADE
                 ON DELETE CASCADE
         )
         """,
         """
-        CREATE TABLE IF NOT EXISTS noaa_weather_monthly (
-            entry_id 
-            station_id VARCHAR(50) NOT NULL,
-            month
-            year
-            average_temp
-            average_min_temp
-            average_max_temp
-            snow_inches
-            precipitation_inches
+        CREATE TABLE IF NOT EXISTS noaa_monthly_averages (
+            station_id VARCHAR(50),
+            month INTEGER,
+            year INTEGER,
+            data_type CHAR(4),
+            value DECIMAL,
+            PRIMARY KEY (station_id, month, year, data_type),
             FOREIGN KEY (station_id)
                 REFERENCES noaa_weather_stations (station_id)
                 ON UPDATE CASCADE
@@ -220,7 +221,7 @@ def createTables():
     conn = None
     try:
         # read the connection parameters
-        params = config()
+        params = db_config()
         # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
@@ -239,10 +240,33 @@ def createTables():
         if conn is not None:
             conn.close()
 
+def get_db_cursor():
+   """ Connect to the PostgreSQL database server and insert zip code info """
+   try:
+      # read connection parameters
+      params = db_config()
+
+      # connect to the PostgreSQL server
+      global db_connection
+      db_connection = psycopg2.connect(**params)
+      return db_connection.cursor()
+
+   except (Exception, psycopg2.DatabaseError) as error:
+      logging.error(error);
+      sys.exit(error)
+
+def query_db(db_cursor, insert_cmd, columns, values):
+   try:
+      db_cursor.execute(insert_cmd, (AsIs(','.join(columns)), tuple(values)))
+      db_connection.commit()
+   except (Exception, psycopg2.DatabaseError) as error:
+      logging.error(f'Insert Command: {insert_cmd}')
+      logging.error(f'Insert Command Values: {values}')
+      sys.exit(error)
+
 def main():
-    createTables()
+    create_tables()
     
 if __name__ =='__main__':
-   logFileName = f'log/db_config_{str(datetime.now()).replace(" ", "_")}.log'
-   logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
-   main()
+    log_config('db_config')
+    main()

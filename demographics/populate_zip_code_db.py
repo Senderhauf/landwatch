@@ -4,7 +4,8 @@ from psycopg2.extensions import AsIs
 from datetime import datetime
 import logging
 import sys
-from db_config.db_config import config, createTables
+from config.db_config import db_config, get_db_cursor, query_db
+from config.utils import log_config
 
 STATES_ABREVIATION_LIST = [
    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA',
@@ -126,94 +127,53 @@ ZIP_POPULATION_HISTORY_COLUMNS = [
    'acs_estimated_population_2011_margin'
 ]
 
-# postgres database connection
-db_connection = None
-
-# postgres database cursor
-db_cursor = None
-
-def dbCleanUp():
-   """ close the communication with the PostgreSQL """
-   if db_connection is not None:
-      db_connection.close()
-   if db_cursor is not None:
-      db_cursor.close()
-
-def connectDb():
-   """ Connect to the PostgreSQL database server and insert zip code info """
-   try:
-      # read connection parameters
-      params = config()
-
-      # connect to the PostgreSQL server
-      global db_connection
-      db_connection = psycopg2.connect(**params)
-
-      # create a cursor
-      global db_cursor
-      db_cursor = db_connection.cursor()
-
-   except (Exception, psycopg2.DatabaseError) as error:
-      dbCleanUp()
-      sys.exit(error)
-
-def insertDb(insertCmd, columns, values):
-   try:
-      db_cursor.execute(insertCmd, (AsIs(','.join(columns)), tuple(values)))
-      db_connection.commit()
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(f'columns: {columns}')
-      logging.error(f'values: {values}')
-      logging.error(error)
-      dbCleanUp()
-      sys.exit(error)
-
-def getValue(csv_row, column):
+def get_value(csv_row, column):
    val = csv_row[column]
    return val if len(val) > 0 else None
 
-def useZip(csv_row):
+def use_zip(csv_row):
    return csv_row['type'] in ['STANDARD', 'PO BOX', 'UNIQUE']
 
-def insertRowIntoTable(csv_row, table_name, columns):
+def insert_row_into_table(db_cursor, csv_row, table_name, columns):
    """ Insert zip code data info into database at specified table """
-   if (not useZip(csv_row)):
+   if (not use_zip(csv_row)):
       return
 
-   values = [getValue(csv_row, columns[column_num]) for column_num in range(0, len(columns))]
+   values = [get_value(csv_row, columns[column_num]) for column_num in range(0, len(columns))]
    insert_cmd = f'INSERT INTO {table_name} (%s) VALUES %s ON CONFLICT DO NOTHING'
-   insertDb(insert_cmd, columns, values)
+   query_db(db_cursor, insert_cmd, columns, values)
 
-def populateZipDb():
+def populate_zip_db():
    with open('./demographics/zip_code_data.csv', newline='') as csvfile:
       reader = csv.DictReader(csvfile, delimiter=',')
+      db_cursor = get_db_cursor()
       for row in reader:
-         insertRowIntoTable(row, 'zip_codes', ZIP_CODES_COLUMNS)
-         insertRowIntoTable(row, 'zip_demographics', ZIP_DEMOGRAPHICS_COLUMNS)
-         insertRowIntoTable(row, 'zip_households', ZIP_HOUSEHOLDS_COLUMNS)
-         insertRowIntoTable(row, 'zip_population_history', ZIP_POPULATION_HISTORY_COLUMNS)
+         insert_row_into_table(db_cursor, row, 'zip_codes', ZIP_CODES_COLUMNS)
+         insert_row_into_table(db_cursor, row, 'zip_demographics', ZIP_DEMOGRAPHICS_COLUMNS)
+         insert_row_into_table(db_cursor, row, 'zip_households', ZIP_HOUSEHOLDS_COLUMNS)
+         insert_row_into_table(db_cursor, row, 'zip_population_history', ZIP_POPULATION_HISTORY_COLUMNS)
 
 def db_populated():
    ret = False
+   db_cursor = get_db_cursor()
    try:
       query = 'SELECT COUNT(*) FROM zip_codes'
       db_cursor.execute(query)
       countZipCodes = db_cursor.fetchone()
       ret = True if countZipCodes == 42632 else False
    except (Exception, psycopg2.DatabaseError) as error:
-      dbCleanUp()
+      logging.error(error)
       sys.exit(error)
+   db_cursor.close()
    return ret
 
 def main():
-   connectDb()
    if not db_populated():
-      logging.info('Populating database with zip code data')
-      populateZipDb()
+      logging.info('Populating database with zip code data...')
+      populate_zip_db()
    else:
-      logging.info('Database already populated with zip code data')
+      logging.info('Database already populated with zip code data...')
 
 if __name__ =='__main__':
-   logFileName = f'log/populate_zip_code_db_{str(datetime.now()).replace(" ", "_")}.log'
-   logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+   log_config('populate_zip_code_db')
    main()

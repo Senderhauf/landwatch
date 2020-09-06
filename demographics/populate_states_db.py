@@ -4,7 +4,8 @@ from psycopg2.extensions import AsIs
 from datetime import datetime
 import logging
 import sys
-from db_config.db_config import config, createTables
+from config.db_config import db_config, get_db_cursor, query_db
+from config.utils import log_config
 
 STATES_LIST = [
    {'state_abrev': 'AL', 'state_name': 'Alabama'},
@@ -62,76 +63,35 @@ STATES_LIST = [
    {'state_abrev': 'VI', 'state_name': 'Virgin Islands'},
 ]
 
-# postgres database connection
-db_connection = None
-
-# postgres database cursor
-db_cursor = None
-
-def dbCleanUp():
-   """ close the communication with the PostgreSQL """
-   if db_connection is not None:
-      db_connection.close()
-   if db_cursor is not None:
-      db_cursor.close()
-
-def connectDb():
-   """ Connect to the PostgreSQL database server """
-   try:
-      # read connection parameters
-      params = config()
-
-      # connect to the PostgreSQL server
-      global db_connection
-      db_connection = psycopg2.connect(**params)
-
-      # create a cursor
-      global db_cursor
-      db_cursor = db_connection.cursor()
-
-   except (Exception, psycopg2.DatabaseError) as error:
-      dbCleanUp()
-      sys.exit(error)
-
-def insertDb(insertCmd, columns, values):
-   try:
-      db_cursor.execute(insertCmd, (AsIs(','.join(columns)), tuple(values)))
-      db_connection.commit()
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(f'columns: {columns}')
-      logging.error(f'values: {values}')
-      logging.error(error)
-      dbCleanUp()
-      sys.exit(error)
-
-def populateStatesDb():
+def populate_states_db():
+   db_cursor = get_db_cursor()
    columns = ['state_abrev', 'state_name']
    for state in STATES_LIST:
       values = [state['state_abrev'], state['state_name']]
       insert_cmd = f'INSERT INTO states (%s) VALUES %s ON CONFLICT DO NOTHING'
-      insertDb(insert_cmd, columns, values)
+      query_db(db_cursor, insert_cmd, columns, values)
 
 def db_populated():
    ret = False
+   db_cursor = get_db_cursor()
    try:
       query = 'SELECT COUNT(*) FROM states'
       db_cursor.execute(query)
       countStates = db_cursor.fetchone()
       ret = True if countStates == len(STATES_LIST) else False
    except (Exception, psycopg2.DatabaseError) as error:
-      dbCleanUp()
-      sys.exit(error)
+      logging.error(error)
+      sys.exit(0)
+   db_cursor.close()
    return ret
 
 def main():
-   connectDb()
    if not db_populated():
       logging.info('Populating database with states data')
-      populateStatesDb()
+      populate_states_db()
    else:
       logging.info('Database already populated with states data')
 
 if __name__ =='__main__':
-   logFileName = f'log/populate_states_db_{str(datetime.now()).replace(" ", "_")}.log'
-   logging.basicConfig(filename=logFileName, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+   log_config('populate_state_db')
    main()

@@ -1,0 +1,34 @@
+automate data request to token email from NOAA
+
+noaa_weather database tables:
+
+    noaa_weather_stations:
+
+        contains list of weather stations
+
+        fields:
+            station_id
+            zip_code
+            elevation
+            mindate
+            maxdate
+            latitude
+            name
+            datacoverage
+            elevationUnit
+            longitude
+
+    noaa_weather_monthly:
+
+        contains list of every station's temperature, precipitation for every month available
+
+        fields:
+            month
+            year
+            station_id (foreign key noaa_weather_stations)
+            entry_id
+            average_temp
+            average_min_temp
+            average_max_temp
+            snow_inches
+            precipitation_inches

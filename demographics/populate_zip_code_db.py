@@ -4,15 +4,12 @@ from psycopg2.extensions import AsIs
 from datetime import datetime
 import logging
 import sys
-from config.db_config import db_config, get_db_cursor, query_db
+from config.db_config import get_db_cursor, query_db
 from config.utils import log_config
+import json
+import os
 
-STATES_ABREVIATION_LIST = [
-   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA',
-   'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
-   'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK',
-   'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-]
+STATES_ABREV_LIST = [state['state_abrev'] for state in json.loads(os.environ['STATES_LIST'])]
 
 ZIP_CODES_COLUMNS = [
    'zip_code',
@@ -132,7 +129,7 @@ def get_value(csv_row, column):
    return val if len(val) > 0 else None
 
 def use_zip(csv_row):
-   return csv_row['type'] in ['STANDARD', 'PO BOX', 'UNIQUE']
+   return csv_row['type'] in ['STANDARD', 'PO BOX', 'UNIQUE'] and csv_row['state_abrev'] in STATES_ABREV_LIST
 
 def insert_row_into_table(db_cursor, csv_row, table_name, columns):
    """ Insert zip code data info into database at specified table """

@@ -1,28 +1,20 @@
 #!/usr/bin/env python3
 import psycopg2
-from configparser import ConfigParser
 import sys
 import logging
 from .utils import log_config
 import psycopg2
 from psycopg2.extensions import AsIs
+import os
 
-def db_config(filename='./config/database.ini', section='postgresql'):
-    # create a parser
-    parser = ConfigParser()
-    # read config file
-    parser.read(filename)
-
-    # get section, default to postgresql
-    db = {}
-    if parser.has_section(section):
-        params = parser.items(section)
-        for param in params:
-            db[param[0]] = param[1]
-    else:
-        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
-
-    return db
+def get_db_config():
+    # db connection parameters
+    return {
+        'host': os.environ['POSTGRES_HOST'],
+        'database': os.environ['POSTGRES_DB'],
+        'user': os.environ['POSTGRES_USER'],
+        'password': os.environ['POSTGRES_PASSWORD']
+    }
 
 def create_tables():
     """ create tables in the PostgreSQL database"""
@@ -216,12 +208,27 @@ def create_tables():
                 ON UPDATE CASCADE
                 ON DELETE CASCADE
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS zip_code_noaa_weather_stations (
+            station_id VARCHAR(50),
+            zip_code CHAR(5),
+            PRIMARY KEY (station_id, zip_code),
+            FOREIGN KEY (station_id)
+                REFERENCES noaa_weather_stations (station_id)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE,
+            FOREIGN KEY (zip_code)
+                REFERENCES zip_codes (zip_code)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE
+        )
         """
     )
     conn = None
     try:
         # read the connection parameters
-        params = db_config()
+        params = get_db_config()
         # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
@@ -234,35 +241,36 @@ def create_tables():
         # commit the changes
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
+        logging.error('Error at db_config.create_tables')
         logging.error(error)
         sys.exit(error)
     finally:
         if conn is not None:
             conn.close()
 
-def get_db_cursor():
-   """ Connect to the PostgreSQL database server and insert zip code info """
-   try:
-      # read connection parameters
-      params = db_config()
+def get_db_cursor(params=None):
+    """ Connect to the PostgreSQL database server and insert zip code info """
+    try:
+        # connect to the PostgreSQL server
+        params = params if params else get_db_config()
+        global db_connection
+        db_connection = psycopg2.connect(**params)
+        return db_connection.cursor()
 
-      # connect to the PostgreSQL server
-      global db_connection
-      db_connection = psycopg2.connect(**params)
-      return db_connection.cursor()
-
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(error);
-      sys.exit(error)
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error('Error at db_config.get_db_cursor')
+        logging.error(error);
+        sys.exit(error)
 
 def query_db(db_cursor, insert_cmd, columns, values):
-   try:
-      db_cursor.execute(insert_cmd, (AsIs(','.join(columns)), tuple(values)))
-      db_connection.commit()
-   except (Exception, psycopg2.DatabaseError) as error:
-      logging.error(f'Insert Command: {insert_cmd}')
-      logging.error(f'Insert Command Values: {values}')
-      sys.exit(error)
+    try:
+        db_cursor.execute(insert_cmd, (AsIs(','.join(columns)), tuple(values)))
+        db_connection.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error('Error at db_config.query_db')
+        logging.error(f'Insert Command: {insert_cmd}')
+        logging.error(f'Insert Command Values: {values}')
+        sys.exit(error)
 
 def main():
     create_tables()

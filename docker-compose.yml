@@ -8,34 +8,27 @@ services:
       - db
     volumes:
       - .:/usr/src/app
-    environment:
-      DATABASE_URL: postgres://postgres@db/landwatch
+    env_file:
+      - ./.landwatch_env
+      - ./.env
 
   db:
-    image: postgis/postgis:12-3.0-alpine
+    image: ${POSTGRES_IMAGE_NAME}
     restart: always
     environment:
-      # POSTGRES_USER: psql_docker
-      POSTGRES_DB: landwatch
-      POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data
     volumes:
-      # - ./db_config/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_CONT_PORT}"
 
   pgadmin:
-    image: dpage/pgadmin4:4
+    image: ${PGADMIN_IMAGE_NAME}
     restart: always
     depends_on:
       - db
-    environment:
-      PGADMIN_LISTEN_PORT: 80
-      PGADMIN_DEFAULT_EMAIL: admin@email.com
-      PGADMIN_DEFAULT_PASSWORD: secret
     ports:
-      - "8080:80"
+      - "${PGADMIN_HOST_PORT}:${PGADMIN_CONT_PORT}"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     links:

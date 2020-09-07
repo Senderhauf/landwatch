@@ -7,7 +7,7 @@ Checkout the [Backlog](./planning.org) to see planning and progress.
 ## Services
 
 * [Zip Code Demographics](./demographics "Demographics")
-* [Property Listings](./scrape_landandfarm "Listings")
+* [Property Listings](./listings "Listings")
 * [Weather History](./noaa_weather "Weather")
 
 ## Run

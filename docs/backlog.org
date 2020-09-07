@@ -1,0 +1,12 @@
+
+* TODO refactor listings/landandfarm_listings.py -> if url in database doesn't scrape; 
+* TODO refactor listings/landandfarm_listings.py -> if url isn't in database then scrape;
+* TODO refactor listings/landandfarm_listings.py -> find way to delete old listings;
+* DONE refactor noaa_weather/populate_noaa_weather_db.py to run with concurrent.futures as found in listings/landandfarm_listings.py
+    CLOSED: [2020-9-7 Mon 8:8]
+* TODO plan proxy rotation
+* DONE refactor noaa_weather/populate_noaa_weather_db.py to calculate monthly averages before writing datapoints to database
+    CLOSED: [2020-9-7 Mon 7:54]
+* DONE isolate logging functionality to module
+    CLOSED: [2020-9-7 Mon 7:55]
+    

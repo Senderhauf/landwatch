@@ -1,8 +1,0 @@
-
-* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> if url in database doesn't scrape; 
-* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> if url isn't in database then scrape;
-* TODO refactor scrape_landandfarm/scrape_landandfarm.py -> find way to delete old listings;
-* TODO refactor noaa_weather/populate_noaa_weather_db.py to run with concurrent.futures as found in scrape_landandfarm/scrape_landandfarm.py
-* TODO plan proxy rotation
-* TODO refactor noaa_weather/populate_noaa_weather_db.py to calculate monthly averages before writing datapoints to database
-* TODO isolate logging functionality to module

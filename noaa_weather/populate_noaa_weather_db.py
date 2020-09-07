@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 import logging
 import random
-import sys
 import json
-from config.db_config import db_config, get_db_cursor, query_db
+from config.db_config import get_db_cursor, query_db
 from config.utils import log_config, get_request
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import concurrent.futures
+import os
 
-TOKEN_LIST = [
-   'QYumHTESHvMktBsArZIjYseYqPxbHiom',
-   'ugSDZMHZBTNKzmQjXXczUoOsyctWBYim'
-]
+TOKEN_LIST = json.loads(os.environ['NOAA_API_TOKEN_LIST'])
 
-MAX_THREADS = 15
+MAX_THREADS = int(os.environ['MAX_THREADS'])
 
 def get_results(res):
    results_list = []
@@ -148,6 +145,7 @@ def main():
       logging.info(f'Getting info for state: {state["name"]} ...')
       dataset_id = 'GHCND'
       datatypeid_list = ['TMIN', 'TMAX', 'PRCP', 'SNOW']
+      num_stations_state_total = 0
 
       # get last 5 years worth of data
       start_date = datetime.today().replace(day=1)
@@ -156,15 +154,20 @@ def main():
          start_date = end_date - relativedelta(years=1)
          start_date_str = start_date.strftime('%Y-%m-%d')
          end_date_str = end_date.strftime('%Y-%m-%d')
-         state_station_list = get_stations_for_state(state, dataset_id, start_date_str, end_date_str, datatypeid_list)
+         # leave out SNOW datatype when getting stations as we still want stations that have only data for TMIN, TMAX, and PRCP
+         state_station_list = get_stations_for_state(state, dataset_id, start_date_str, end_date_str, datatypeid_list[:3])
          data_params = {'dataset_id': dataset_id, 'start_date': start_date, 'end_date': end_date, 'datatypeid_list': datatypeid_list}
          get_station_data_params_list = [{'station_id': station['id'], 'data_params': data_params} for station in state_station_list]
-         threads = min(MAX_THREADS, len(state_station_list))
-         logging.info(f'{state["name"]} has {len(get_station_data_params_list)} stations. Getting data for {start_date.year}...')
+         num_stations = len(state_station_list)
+         num_stations_state_total = num_stations_state_total + num_stations
+         threads = min(MAX_THREADS, num_stations)
+         logging.info(f'{state["name"]} has {num_stations} stations. Getting data for {start_date.year}...')
          with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
             executor.map(get_station_data, get_station_data_params_list)
-      logging.info(f'Time elapsed for {state["name"]}: {str(datetime.now() - start_time)}')
+      end_time = datetime.now()
+      logging.info(f'Time elapsed for {state["name"]}: {str(end_time - start_time)}')
+      logging.info(f'Amount of seconds per station for {state["name"]}: {(end_time - start_time).total_seconds() / num_stations_state_total}')
 
 if __name__ =='__main__':
-   log_config('noaa_weather_by_zip')
+   log_config('populate_noaa_weather_db')
    main()

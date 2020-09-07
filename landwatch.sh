@@ -3,14 +3,29 @@
 # create database tables
 python3 -m config.db_config
 
-# initialize states data
-python3 -m demographics.populate_states_db
+if [ "$INITIALIZE_STATES" = true ]
+then
+    # initialize states data
+    python3 -m demographics.populate_states_db
+fi
 
-# initialize zip code data
-python3 -m demographics.populate_zip_code_db
+if [ "$INITIALIZE_ZIP_CODE" = true ]
+then
+    # initialize zip code data
+    python3 -m demographics.populate_zip_code_db
+fi
 
-# initialize weather data
-python3 -m noaa_weather.populate_noaa_weather_db
+if [ "$INITIALIZE_WEATHER" = true ]
+then
+    # initialize weather data
+    # python3 -m noaa_weather.populate_noaa_weather_db
+    
+    # link zip codes to nearest weather station
+    python3 -m noaa_weather.populate_zip_code_weather_station_db
+fi
 
-# scrape landandfarm listings
-python3 -m scrape_landandfarm.scrape_landandfarm
+if [ "$INITIALIZE_LISTINGS" = true ]
+then
+    # scrape landandfarm listings
+    python3 -m listings.landandfarm_listings
+fi

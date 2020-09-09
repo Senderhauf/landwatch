@@ -6,8 +6,6 @@ import concurrent.futures
 import json
 import os
 
-MAX_THREADS = int(os.environ['MAX_THREADS'])
-
 STATES_ABREV_LIST = [state['state_abrev'] for state in json.loads(os.environ['STATES_LIST'])]
 
 def insert_db(db_cursor, station_id, zip_code):
@@ -16,8 +14,7 @@ def insert_db(db_cursor, station_id, zip_code):
     insert_cmd = 'INSERT INTO zip_code_noaa_weather_stations (%s) VALUES %s ON CONFLICT DO NOTHING'
     query_db(db_cursor, insert_cmd, columns, values)
 
-def get_nearest_noaa_weather_station(zip_code):
-    db_cursor = get_db_cursor()
+def get_nearest_noaa_weather_station(db_cursor, zip_code):
     query_cmd = (
         f'SELECT stations.station_id FROM noaa_weather_stations as stations '
         f'ORDER BY stations.geog <-> '
@@ -28,7 +25,6 @@ def get_nearest_noaa_weather_station(zip_code):
     station_id = db_cursor.fetchone()[0]
     logging.info(f'Inserting station id {station_id} for zip code {zip_code} ...')
     insert_db(db_cursor, station_id, zip_code)
-    db_cursor.close()
 
 def get_zip_code_list():
     db_cursor = get_db_cursor()
@@ -42,8 +38,9 @@ def main():
     logging.info('Populating database with nearest weather stations for each zip code ...')
     zip_code_list = get_zip_code_list()
     logging.info(f'Number of zip codes: {len(zip_code_list)}')
-    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
-        executor.map(get_nearest_noaa_weather_station, zip_code_list)
+    db_cursor = get_db_cursor()
+    for zip_code in zip_code_list:
+        get_nearest_noaa_weather_station(db_cursor, zip_code)
 
 if __name__ =='__main__':
     log_config('populate_zip_code_weather_station_db')

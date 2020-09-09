@@ -27,5 +27,5 @@ fi
 if [ "$INITIALIZE_LISTINGS" = true ]
 then
     # scrape landandfarm listings
-    python3 -m listings.landandfarm_listings
+    # python3 -m listings.landandfarm_listings
 fi

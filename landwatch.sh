@@ -18,7 +18,7 @@ fi
 if [ "$INITIALIZE_WEATHER" = true ]
 then
     # initialize weather data
-    # python3 -m noaa_weather.populate_noaa_weather_db
+    python3 -m noaa_weather.populate_noaa_weather_db
     
     # link zip codes to nearest weather station
     python3 -m noaa_weather.populate_zip_code_weather_station_db
@@ -27,5 +27,5 @@ fi
 if [ "$INITIALIZE_LISTINGS" = true ]
 then
     # scrape landandfarm listings
-    # python3 -m listings.landandfarm_listings
+    python3 -m listings.landandfarm_listings
 fi

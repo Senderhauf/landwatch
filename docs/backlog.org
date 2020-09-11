@@ -1,4 +1,8 @@
-
+* TODO daemonize python scripts in landwatch.sh
+* TODO Taxes Module
+    - sales tax data (see wolframalpha api)
+    - property taxes
+    - income tax
 * TODO refactor listings/landandfarm_listings.py -> if url in database doesn't scrape; 
 * TODO refactor listings/landandfarm_listings.py -> if url isn't in database then scrape;
 * TODO refactor listings/landandfarm_listings.py -> find way to delete old listings;

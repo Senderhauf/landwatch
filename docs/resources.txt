@@ -41,3 +41,33 @@ Freedom index: https://www.freedominthe50states.org/
 
 Percent of registered voters
 
+Census TIGER/line Shapefiles
+
+    https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+
+Stackoverflow:
+    https://gis.stackexchange.com/questions/21452/how-do-gis-web-apps-work
+
+Pros cons of ORM
+    https://www.fullstackpython.com/object-relational-mappers-orms.html
+
+ArcGIS
+    USA ZIP Code Areas
+        https://www.arcgis.com/home/item.html?id=8d2012a2016e484dafaac0451f9aea24
+
+    United States ZIP Code Boundaries 2018
+        https://esri.maps.arcgis.com/home/item.html?id=0a2fde8aa7404187917488bafcbc77e6
+
+Census tracts vs Zip codes
+    http://proximityone.com/tracts_zips.htm#:~:text=Census%20tracts%20are%20polygons%20and,digit%20ZIP%20Codes%20are%20P.O.&text=Census%20tracts%20provide%20more%20granularity,than%20ZIP%20Codes%20(43%2C000).
+
+Drought Monitor US GIS 
+    https://droughtmonitor.unl.edu/Data/GISData.aspx
+
+Python import and rescale Shapefiles
+    https://www.earthdatascience.org/workshops/gis-open-source-python/intro-vector-data-python/
+    https://www.earthdatascience.org/workshops/gis-open-source-python/reproject-vector-data-in-python/
+
+
+Census Cartographic Boundary Shapefiles
+    https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html

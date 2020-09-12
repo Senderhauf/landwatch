@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# remove all log files older than 2 days old
+find /usr/src/app/log/*.log -mtime +2 -exec rm {} \;
+
 # create database tables
 python3 -m config.db_config
 

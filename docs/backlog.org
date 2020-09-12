@@ -1,15 +1,16 @@
 * TODO daemonize python scripts in landwatch.sh
+* TODO finish [[./demographics/readme.md][Demographics Readme]]
 * TODO Taxes Module
     - sales tax data (see wolframalpha api)
     - property taxes
     - income tax
-* TODO refactor listings/landandfarm_listings.py -> if url in database doesn't scrape; 
-* TODO refactor listings/landandfarm_listings.py -> if url isn't in database then scrape;
-* TODO refactor listings/landandfarm_listings.py -> find way to delete old listings;
-* DONE refactor noaa_weather/populate_noaa_weather_db.py to run with concurrent.futures as found in listings/landandfarm_listings.py
+* TODO refactor [[./listings/landandfarm_listings.py][landandfarm_listings]] -> if url in database doesn't scrape; 
+* TODO refactor [[./listings/landandfarm_listings.py][landandfarm_listings]] -> if url isn't in database then scrape;
+* TODO refactor [[./listings/landandfarm_listings.py][landandfarm_listings]] -> find way to delete old listings;
+* DONE refactor [[./noaa_weather/populate_noaa_weather_db.py][populate_noaa_weather_db]] to run with concurrent.futures as found in listings/landandfarm_listings.py
     CLOSED: [2020-9-7 Mon 8:8]
 * TODO plan proxy rotation
-* DONE refactor noaa_weather/populate_noaa_weather_db.py to calculate monthly averages before writing datapoints to database
+* DONE refactor [[./noaa_weather/populate_noaa_weather_db.py][populate_noaa_weather_db]] to calculate monthly averages before writing datapoints to database
     CLOSED: [2020-9-7 Mon 7:54]
 * DONE isolate logging functionality to module
     CLOSED: [2020-9-7 Mon 7:55]

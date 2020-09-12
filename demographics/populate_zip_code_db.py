@@ -141,7 +141,7 @@ def insert_row_into_table(db_cursor, csv_row, table_name, columns):
    query_db(db_cursor, insert_cmd, columns, values)
 
 def populate_zip_db():
-   with open('./demographics/zip_code_data.csv', newline='') as csvfile:
+   with open('./data/zip_code_data.csv', newline='') as csvfile:
       reader = csv.DictReader(csvfile, delimiter=',')
       db_cursor = get_db_cursor()
       for row in reader:

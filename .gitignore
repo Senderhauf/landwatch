@@ -109,3 +109,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.gitsecret/keys/random_seed
+
+# Private data sources
+data
